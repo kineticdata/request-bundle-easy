@@ -132,6 +132,9 @@ div.results.hide {
 div.console-list ul.console li a.templateButton.view-activity {
     margin: -20px 0 10px 0;
 }
+div.console-list ul.console li a.templateButton.view-activity.approval {
+    margin: 0 0 10px 0;
+}
 
 /* Responsive */
 @media (max-width: 991px) {

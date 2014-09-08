@@ -237,7 +237,7 @@ function defaultRowCallback(li, record, index, displayFields) {
         if(record['Customer Survey Status'] === 'Sent' && record['Submit Type'] === 'Approval') {
             innerRightColumn.prepend('<br />')
                 .prepend(
-                    $('<a>').addClass('view-activity templateButton')
+                    $('<a>').addClass('view-activity approval templateButton')
                         .attr('href', encodeURI(BUNDLE.applicationPath + 'DisplayPage?csrv=' + record['Id']))
                         .attr('target', '_self')
                         .append('Complete Approval')
@@ -246,6 +246,9 @@ function defaultRowCallback(li, record, index, displayFields) {
         if(record['Submit Type'] === 'Approval'){
             rightColumn.append(innerRightColumn);
             li.append(rightColumn);
+            li.prepend(
+                $('<h4>').text(record['Template Name'])
+            );
         }
         else {
             li.append(innerRightColumn);
