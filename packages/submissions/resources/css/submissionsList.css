@@ -22,7 +22,7 @@ div.console-list div.header:after { clear: both; }
 *:first-child+html div.console-list div.header { zoom: 1; } /* IE7 */
 
 /* List */
-div.console-list ul.console li { margin: 0 0 10px 0; }
+div.console-list ul.console li { margin: 0 0 10px 0; border-bottom: 1px solid #e3e3e3; padding-bottom: 10px;}
 /* Clearfix, for floats */
 div.console-list ul.console li { *zoom: 1; }
 div.console-list ul.console li:before,
