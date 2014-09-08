@@ -352,3 +352,7 @@ table.dataTable thead .sorting:after {
     font-size: 20px;
     margin-top: -10px;
 }
+
+ul.dropdown-user li.text-center {
+    margin: 0 10px;
+}

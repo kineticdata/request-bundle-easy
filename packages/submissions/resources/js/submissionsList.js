@@ -247,7 +247,7 @@ function defaultRowCallback(li, record, index, displayFields) {
             rightColumn.append(innerRightColumn);
             li.append(rightColumn);
             li.prepend(
-                $('<h4>').text(record['Template Name'])
+                $('<h4>').text(record['Originating Name'])
             );
         }
         else {
