@@ -1,0 +1,38 @@
+@charset "utf-8";
+
+h3 { margin: 5px 0; }
+p.description {
+    color: #666;
+}
+div.image {
+    margin: 5px 0;
+}
+div.attribute-description {
+    margin-left: 20px;
+}
+ul.cost-details, ul.cost-details .cost-nested {
+    margin: 0px;
+    padding: 0px;
+    clear: both;
+}
+ul.cost-details {
+    margin-left: 20px;
+}
+ul.cost-details li {
+    list-style: none;
+}
+ul.cost-details .cost-nested li {
+    list-style: none;
+    padding: 0 10px;
+    float: left;
+    clear: none;
+}
+#info-chart {
+    height: 200px;
+    margin-bottom: 20px;
+}
+
+/* Attributes */
+ul.attributes li {
+    word-wrap: break-word;
+}

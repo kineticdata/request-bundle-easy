@@ -1,0 +1,104 @@
+@charset "utf-8";
+
+header.container { margin: 20px auto; }
+header div.wrap-float { float: left; width: 880px; }
+header div.wrap h2,
+header div.wrap-float h2 { margin: 10px 0; }
+header div.description { font-size: 14px; }
+header div.category-image { margin: 10px 0; width: 80px; float: left; }
+header div.category-image img { height: 60px; width: 60px; }
+/* Breadcrumbs */
+div.breadcrumbs ul li { float: left; }
+div.breadcrumbs ul li a { font-size: 26px; font-weight: 500; }
+div.breadcrumbs ul li a { /*color: #E6532C;*/ color: #3D6699;}
+div.breadcrumbs ul li a:hover { text-decoration: none; }
+
+.vertical-spacer{
+	margin-top: 25px;
+}
+/*
+.graph-border{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: lightgrey;
+}
+*/
+.adminTitle{
+	font-size:26px;
+	font-weight: 500;
+	color: #3D6699;
+}
+
+.admin-widget {
+	border-style:solid;
+	border-color: #0079c1;
+	border-radius: 10px 10px 0px 0px;
+	border-radius: 10px 10px 0px 0px;
+	-webkit-border-radius: 10px 10px 0px 0px;
+	-moz-border-radius: 10px 10px 0px 0px;
+}
+.widget-title {
+	height: 2em;
+	background-color: #0079c1;
+	color: #FFFFFF;
+	padding: 3px;
+	font-size: 1.3em;
+}
+
+.admin-widget.priority-requests .widget-title {
+    background-color:red;
+}
+.admin-widget.priority-requests {
+    border-color:red;
+}
+
+.admin-widget.sla-breach .widget-title {
+    background-color:orange;
+}
+.admin-widget.sla-breach {
+    border-color:orange;
+}
+	
+.widget-content {
+}
+
+.widget-content ul{
+	padding: 5px;
+	list-style-type: none;
+}
+
+.widget-content .col-right{
+	display: inline-block;
+	float: right;
+}
+
+.even , 
+.odd {
+	padding: 5px;
+}
+
+.odd{
+	background-color:#c8c8c8;
+}
+
+
+/* Responsive */
+@media (min-width: 991px) {
+    section.container ul.templates { min-width: 660px; }
+    section.container div.subcategories { min-width: 260px; }
+}
+@media (min-width: 1200px) {
+    section.container ul.templates { min-width: 860px; }
+    section.container div.subcategories { min-width: 260px; }
+}
+@media (max-width: 991px) {
+   section.container ul.templates { min-width: 460px; }
+   section.container div.subcategories { min-width: 260px; }
+}
+@media (min-width: 767px) {
+    div.fixed-header-spacer { height: 90px; }
+}
+@media (max-width: 767px) {
+    div.fixed-header-spacer { height: 50px; }
+    div.breadcrumbs ul li a{ font-size: 18px; }
+}

@@ -1,0 +1,381 @@
+<header class="sub">
+    <div class="container">
+        <nav>
+            <ul class="nav" role="navigation">
+				<% if (preferences.containsKey("Favorite")){%>
+					<li class="dropdown">
+						<span class="nav-button-inner">
+							<span class="nav-button-title nav-button-line2">
+								<%=ThemeLocalizer.getString(standardsResourceBundle,"Favorite")%>
+							</span>
+							<span>
+								<%=ThemeLocalizer.getString(standardsResourceBundle,"Services")%>
+							</span>
+							<i class="hidden nav-sprite"></i>
+						</span>	
+						<div class="flyout-table-wrap">
+							<table cellspacing="0" cellpadding="0" surround="0,30,30,30" class="flyout-table exposed-skin">
+								<tbody>
+									<tr>
+										<td class="nav-pop-tl nav-pop-h">
+											<div class="nav-pop-lr-min"></div>
+										</td>
+										<td class="nav-pop-tc nav-pop-h"></td>
+										<td class="nav-pop-tr nav-pop-h">
+											<div class="nav-pop-lr-min"></div>
+										</td>
+									</tr>
+									<tr>
+										<td class="nav-pop-cl nav-pop-v"></td>
+										<td class="nav-pop-cc ap-content">
+											<div class="flyout" class="nav-super">
+												<div class="subcats-wrap subcats-wrap-super hide">
+													<ul class="subcats">
+													</ul>
+													<div class="subcats-border">
+													</div>
+													<div class="subcats-border subcats-border-fix">
+													</div>
+												</div>
+												<div class="rootcats-wrap">
+													<ul class="dropdown-menus unstyled" role="menu" aria-labelledby="services">
+													<% for (String favoriteFormID : favoriteForms) { %>
+														<% Template favTemplate = catalog.getTemplateById(favoriteFormID); %>
+														<% if(favTemplate != null) { %>
+															<li class="category" data-id="<%= favTemplate.getId()%>" data-name="<%= favTemplate.getName()%>">
+																<a href="<%= favTemplate.getAnonymousUrl()%>" class="name">
+																	<%=ThemeLocalizer.getString(serviceItemsResourceBundle,favTemplate.getName())%>
+																</a>
+																<div class="description">
+																	<%=ThemeLocalizer.getString(serviceItemsResourceBundle,favTemplate.getDescription())%>
+																</div>
+															</li>
+														<% } %>
+													<% }%>
+													</ul>
+												</div>
+											</div>
+										</td>
+										<td class="nav-pop-cr nav-pop-v"></td>
+									</tr>
+									<tr>
+										<td class="nav-pop-bl nav-pop-v"></td>
+										<td class="nav-pop-bc nav-pop-h"></td>
+										<td class="nav-pop-br nav-pop-v"></td>
+									</tr>
+								</tbody>
+							</table>
+						</div> 						
+					</li>
+				<%}%>
+                <li class="dropdown">
+                    <span class="nav-button-inner">
+                        <span>
+                            <%=ThemeLocalizer.getString(standardsResourceBundle,"Services by")%>
+                        </span>
+                        <span class="nav-button-title nav-button-line2">
+                            <%=ThemeLocalizer.getString(standardsResourceBundle,"Category")%>
+                        </span>
+                        <i class="hidden nav-sprite"></i>
+                    </span>
+                    <div class="flyout-table-wrap">
+                        <table cellspacing="0" cellpadding="0" surround="0,30,30,30" class="flyout-table exposed-skin">
+                            <tbody>
+                                <tr>
+                                    <td class="nav-pop-tl nav-pop-h">
+                                        <div class="nav-pop-lr-min"></div>
+                                    </td>
+                                    <td class="nav-pop-tc nav-pop-h"></td>
+                                    <td class="nav-pop-tr nav-pop-h">
+                                        <div class="nav-pop-lr-min"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="nav-pop-cl nav-pop-v"></td>
+                                    <td class="nav-pop-cc ap-content">
+                                        <div class="flyout" class="nav-super">
+                                            <div class="subcats-wrap subcats-wrap-super hide">
+                                                <ul class="subcats">
+                                                </ul>
+                                                <div class="subcats-border">
+                                                </div>
+                                                <div class="subcats-border subcats-border-fix">
+                                                </div>
+                                            </div>
+                                            <div class="rootcats-wrap">
+                                                <ul class="dropdown-menus unstyled" role="menu" aria-labelledby="services">
+                                                <% for (Category category : catalog.getRootCategories(context)) { %>
+													<% if(!(category.getName().equals("Activity") || category.getName().equals("Help") || category.getName().equals("Portals"))) { %>
+														<% if(!categoryFilterHashSet.contains(category.getName())) {%>
+															<% if (category.hasTemplates() || category.hasNonEmptySubcategories()) { %>
+																<li class="category" data-id="<%= category.getId()%>" data-name="<%= category.getName()%>">
+																	<a href="<%= bundle.getProperty("categoryUrl") %>&category=<%= URLEncoder.encode(category.getFullName(), "UTF-8")%>" class="name">
+																		<%=ThemeLocalizer.getString(categoryResourceBundle,category.getName())%>
+																	</a>
+																	<div class="description">
+																		<%=ThemeLocalizer.getString(categoryResourceBundle,category.getDescription())%>
+																	</div>
+																	<%-- SUBCATEGORIES DATA --%>
+																	<% if (category.hasNonEmptySubcategories()) {%>
+																	<ul class="subcategories hide">
+																		<% for (Category subcategory : category.getSubcategories()) { %>
+																			<% if (subcategory.hasTemplates()) { %>
+																			<li class="subcategory" data-id="<%= subcategory.getId()%>" data-name="<%= subcategory.getName()%>">
+																				<a href="<%= bundle.getProperty("categoryUrl") %>&category=<%= URLEncoder.encode(subcategory.getFullName(), "UTF-8")%>" class="name">
+																					<%=ThemeLocalizer.getString(categoryResourceBundle,subcategory.getName())%>
+																				</a>
+																				<div class="description">
+																					<%=ThemeLocalizer.getString(categoryResourceBundle,subcategory.getDescription())%>
+																				</div>
+																			</li>
+																			<% }%>
+																		<% }%>
+																		<div class="clearfix"></div>
+																	</ul>
+																	<% }%>
+																</li>
+															<% } %>
+														<% } %>
+													<% } %>
+                                                <% }%>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="nav-pop-cr nav-pop-v"></td>
+                                </tr>
+                                <tr>
+                                    <td class="nav-pop-bl nav-pop-v"></td>
+                                    <td class="nav-pop-bc nav-pop-h"></td>
+                                    <td class="nav-pop-br nav-pop-v"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>          
+                </li>
+				<li class="dropdown">
+                    <span class="nav-button-inner">
+                        <span>
+                            &nbsp;
+                        </span>
+                        <span class="nav-button-title nav-button-line2">
+                            <%=ThemeLocalizer.getString(standardsResourceBundle,"I want to...")%>
+                        </span>
+                        <i class="hidden nav-sprite"></i>
+                    </span>
+                    <div class="flyout-table-wrap">
+                        <table cellspacing="0" cellpadding="0" surround="0,30,30,30" class="flyout-table exposed-skin">
+                            <tbody>
+                                <tr>
+                                    <td class="nav-pop-tl nav-pop-h">
+                                        <div class="nav-pop-lr-min"></div>
+                                    </td>
+                                    <td class="nav-pop-tc nav-pop-h"></td>
+                                    <td class="nav-pop-tr nav-pop-h">
+                                        <div class="nav-pop-lr-min"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="nav-pop-cl nav-pop-v"></td>
+                                    <td class="nav-pop-cc ap-content">
+                                        <div class="flyout" class="nav-super">
+                                            <div class="subcats-wrap subcats-wrap-super hide">
+                                                <ul class="subcats">
+                                                </ul>
+                                                <div class="subcats-border">
+                                                </div>
+                                                <div class="subcats-border subcats-border-fix">
+                                                </div>
+                                            </div>
+                                            <div class="rootcats-wrap">
+                                                <ul class="dropdown-menus unstyled" role="menu" aria-labelledby="services">
+                                                <% for (Category category : catalog.getRootCategories(context)) { %>
+													<% if(category.getName().equals("Activity")) { %>
+														<% if(!categoryFilterHashSet.contains(category.getName())) {%>
+															<% if (category.hasTemplates() || category.hasNonEmptySubcategories()) { %>
+																<% for (Template tmpl : category.getTemplates()) { %>
+																	<li class="category" data-id="<%= category.getId()%>" data-name="<%= category.getName()%>">
+																		<a href="<%= tmpl.getAnonymousUrl()%>" class="name">
+																			<%=ThemeLocalizer.getString(serviceItemsResourceBundle,tmpl.getName())%>
+																		</a>
+																		<div class="description">
+																			<%=ThemeLocalizer.getString(serviceItemsResourceBundle,tmpl.getDescription())%>
+																		</div>
+																	</li>
+																<% } %>
+															<% } %>
+														<% } %>
+													<% } %>
+                                                <% }%>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="nav-pop-cr nav-pop-v"></td>
+                                </tr>
+                                <tr>
+                                    <td class="nav-pop-bl nav-pop-v"></td>
+                                    <td class="nav-pop-bc nav-pop-h"></td>
+                                    <td class="nav-pop-br nav-pop-v"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>          
+                </li>
+				<li class="dropdown">
+                    <span class="nav-button-inner">
+                        <span>
+                            <%=ThemeLocalizer.getString(standardsResourceBundle,"Find")%>
+                        </span>
+                        <span class="nav-button-title nav-button-line2">
+                            <%=ThemeLocalizer.getString(standardsResourceBundle,"Help")%>
+                        </span>
+                        <i class="hidden nav-sprite"></i>
+                    </span>
+                    <div class="flyout-table-wrap">
+                        <table cellspacing="0" cellpadding="0" surround="0,30,30,30" class="flyout-table exposed-skin">
+                            <tbody>
+                                <tr>
+                                    <td class="nav-pop-tl nav-pop-h">
+                                        <div class="nav-pop-lr-min"></div>
+                                    </td>
+                                    <td class="nav-pop-tc nav-pop-h"></td>
+                                    <td class="nav-pop-tr nav-pop-h">
+                                        <div class="nav-pop-lr-min"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="nav-pop-cl nav-pop-v"></td>
+                                    <td class="nav-pop-cc ap-content">
+                                        <div class="flyout" class="nav-super">
+                                            <div class="subcats-wrap subcats-wrap-super hide">
+                                                <ul class="subcats">
+                                                </ul>
+                                                <div class="subcats-border">
+                                                </div>
+                                                <div class="subcats-border subcats-border-fix">
+                                                </div>
+                                            </div>
+                                            <div class="rootcats-wrap">
+                                                <ul class="dropdown-menus unstyled" role="menu" aria-labelledby="services">
+                                                <% for (Category category : catalog.getRootCategories(context)) { %>
+													<% if(category.getName().equals("Help")) { %>
+														<% if(!categoryFilterHashSet.contains(category.getName())) {%>
+															<% if (category.hasTemplates() || category.hasNonEmptySubcategories()) { %>
+																<% for (Template tmpl : category.getTemplates()) { %>
+																	<li class="category" data-id="<%= category.getId()%>" data-name="<%= category.getName()%>">
+																		<a href="<%= tmpl.getAnonymousUrl()%>" class="name">
+																			<%=ThemeLocalizer.getString(serviceItemsResourceBundle,tmpl.getName())%>
+																		</a>
+																		<div class="description">
+																			<%=ThemeLocalizer.getString(serviceItemsResourceBundle,tmpl.getDescription())%>
+																		</div>
+																	</li>
+																<% } %>
+															<% } %>
+														<% } %>
+													<% } %>
+                                                <% }%>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="nav-pop-cr nav-pop-v"></td>
+                                </tr>
+                                <tr>
+                                    <td class="nav-pop-bl nav-pop-v"></td>
+                                    <td class="nav-pop-bc nav-pop-h"></td>
+                                    <td class="nav-pop-br nav-pop-v"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>          
+                </li>
+				
+				<%-- Only want to do this if the user has access to other portals or Administrator --%>
+				<li class="dropdown">
+                    <span class="nav-button-inner">
+                        <span>
+                            <%=ThemeLocalizer.getString(standardsResourceBundle,"Access")%>
+                        </span>
+                        <span class="nav-button-title nav-button-line2">
+                            <%=ThemeLocalizer.getString(standardsResourceBundle,"Other Portals")%>
+                        </span>
+                        <i class="hidden nav-sprite"></i>
+                    </span>
+                    <div class="flyout-table-wrap">
+                        <table cellspacing="0" cellpadding="0" surround="0,30,30,30" class="flyout-table exposed-skin">
+                            <tbody>
+                                <tr>
+                                    <td class="nav-pop-tl nav-pop-h">
+                                        <div class="nav-pop-lr-min"></div>
+                                    </td>
+                                    <td class="nav-pop-tc nav-pop-h"></td>
+                                    <td class="nav-pop-tr nav-pop-h">
+                                        <div class="nav-pop-lr-min"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="nav-pop-cl nav-pop-v"></td>
+                                    <td class="nav-pop-cc ap-content">
+                                        <div class="flyout" class="nav-super">
+                                            <div class="subcats-wrap subcats-wrap-super hide">
+                                                <ul class="subcats">
+                                                </ul>
+                                                <div class="subcats-border">
+                                                </div>
+                                                <div class="subcats-border subcats-border-fix">
+                                                </div>
+                                            </div>
+                                            <div class="rootcats-wrap">
+                                                <ul class="dropdown-menus unstyled" role="menu" aria-labelledby="services">
+                                                <% for (Category category : catalog.getRootCategories(context)) { %>
+													<% if(category.getName().equals("Portals")) { %>
+														<% if(!categoryFilterHashSet.contains(category.getName())) {%>
+															<% if (category.hasTemplates() || category.hasNonEmptySubcategories()) { %>
+																<% for (Template tmpl : category.getTemplates()) { %>
+																	<li class="category" data-id="<%= category.getId()%>" data-name="<%= category.getName()%>">
+																		<a href="<%= tmpl.getAnonymousUrl()%>" class="name">
+																			<%=ThemeLocalizer.getString(serviceItemsResourceBundle,tmpl.getName())%>
+																		</a>
+																		<div class="description">
+																			<%=ThemeLocalizer.getString(serviceItemsResourceBundle,tmpl.getDescription())%>
+																		</div>
+																	</li>
+																<% } %>
+															<% } %>
+														<% } %>
+													<% } %>
+                                                <% }%>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="nav-pop-cr nav-pop-v"></td>
+                                </tr>
+                                <tr>
+                                    <td class="nav-pop-bl nav-pop-v"></td>
+                                    <td class="nav-pop-bc nav-pop-h"></td>
+                                    <td class="nav-pop-br nav-pop-v"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>          
+                </li>
+				<li class="dropdown">
+					<span class="nav-button-inner">
+						<a href="http://mobility68-ar.trybmc.com/eschat/arhome.html?login=m:uid~uid:Joe" target="_blank" style="color:inherit">
+							<span class="nav-button-title nav-button-line2">
+								<%=ThemeLocalizer.getString(standardsResourceBundle,"Chat")%>
+							</span>&nbsp;
+							<span>
+								<%=ThemeLocalizer.getString(standardsResourceBundle,"with Virtual Agent")%>
+							</span>
+							<i class="hidden nav-sprite"></i>
+						</a>
+					</span>
+				</li>
+            </ul>
+        </nav>
+    </div>
+</header>

@@ -1,0 +1,60 @@
+<%!
+    public static class Person {
+        public static final String FORM_NAME = "KS_SAMPLE_People";
+        public static final String FIELD_FIRST_NAME = "240000004";
+        public static final String FIELD_LAST_NAME = "240000003";
+        public static final String FIELD_LOGIN_ID = "240000005";
+		public static final String FIELD_REGION = "200000012";
+		public static final String FIELD_DEFAULT_COUNTRY = "720000006";
+		public static final String FIELD_DEPARTMENT = "200000006";
+        public static final String FIELD_EMAIL = "260000002";
+        public static final String FIELD_PHONE_NUMBER = "240000002";
+		public static final String FIELD_PERSON_ID = "260000007";
+		
+
+        public static final String[] FIELD_IDS = new String[] {
+        	FIELD_FIRST_NAME, FIELD_LAST_NAME, FIELD_LOGIN_ID, FIELD_REGION, FIELD_DEFAULT_COUNTRY, FIELD_DEPARTMENT,
+			FIELD_EMAIL, FIELD_PHONE_NUMBER, FIELD_PERSON_ID
+        };
+
+        public static Person find(HelperContext context, String qualification) {
+			SimpleEntry personEntry = ArsBase.findSingle(context, FORM_NAME, qualification, FIELD_IDS);
+			Person person = new Person(context, personEntry);
+			if (personEntry == null) {
+			    return null;
+			} else {
+			    return new Person(context, personEntry);
+			}
+        }
+
+        public static Person findByUsername(HelperContext context, String username) {
+			String qualification = "'AR Login' = \"" + username + "\"";
+			SimpleEntry personEntry = ArsBase.findSingle(context, FORM_NAME, qualification, FIELD_IDS);
+			if (personEntry == null) {
+			    return null;
+			} else {
+			    return new Person(context, personEntry);
+			}
+        }
+
+        private SimpleEntry entry = null;
+		
+		private HelperContext context = null;
+
+        public Person(HelperContext context, SimpleEntry entry) {
+            this.entry = entry;
+			this.context = context;
+        }
+
+        public String getFirstName() {return entry.getEntryFieldValue(FIELD_FIRST_NAME);}
+        public String getLastName() {return entry.getEntryFieldValue(FIELD_LAST_NAME);}
+        public String getLoginID() {return entry.getEntryFieldValue(FIELD_LOGIN_ID);}
+		public String getRegion() {return entry.getEntryFieldValue(FIELD_REGION);}
+		public String getDefaultCountry() {return entry.getEntryFieldValue(FIELD_DEFAULT_COUNTRY);}
+		public String getDepartment() {return entry.getEntryFieldValue(FIELD_DEPARTMENT);}
+		public String getEmail() {return entry.getEntryFieldValue(FIELD_EMAIL);}
+		public String getPhoneNumber() {return entry.getEntryFieldValue(FIELD_PHONE_NUMBER);}
+		public String getPersonId() {return entry.getEntryFieldValue(FIELD_PERSON_ID);}
+		//public String getCountryCodeAlpha() {return Country.find(context,"'Country' = \"" + person.getDefaultCountry() + "\"").getCountryCodeAlpha();}
+    }
+%>

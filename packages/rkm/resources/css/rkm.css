@@ -1,0 +1,46 @@
+/* Search */
+p.knowledge-search, p.uppercase{
+    padding: 10px 10px 0 10px;
+}
+p.knowledge-search input, p.knowledge-search button {
+    border: none;
+    border-radius: 0;
+    height: 35px;
+    float: left;
+    font-weight: normal;
+}
+p.knowledge-search input { width: 93%;}
+p.knowledge-search button { font-size: 20px; width: 45px;}
+
+ul.portlets li.wide {
+    width: 100%;
+}
+
+ul.portlets li { background-color:#f2f1eb; padding-bottom:20px;}
+
+#knowledgeSearch{
+	margin-top:20px;
+}
+
+ul.portlets h3 .title { float:left; width: 90%;}
+
+ul.portlets  .portlet-content{ list-style:none; }
+
+ul.portlet-content .summary.title { font-weight:900; }
+ul.portlet-content .status.title { font-weight:900;}
+
+ul.portlet-content .summary { float:left; width:75%; }
+ul.portlet-content .status { float:left; list-style:25%; }
+
+div.article {
+	color: black;
+	clear: both;
+	background-color:whitesmoke;
+}
+div.summary a {color:#3d6699; font-weight:bold;}
+div.label {color: black;}
+div.value {color: black; margin:0px 10px 10px 10px;}
+div.value p, div.value span{background-color: whitesmoke !important}
+div.buttons {margin-left: 10px;}
+div.buttons a {margin-right: 20px;}
+ul.rkm li {background-color:#cccccc; padding: 10px; margin-bottom: 15px;}

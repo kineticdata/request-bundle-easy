@@ -1,0 +1,33 @@
+<div class="tableControls">
+    <div class="tableControl sources">
+        <span><%=ThemeLocalizer.getString(catalogResourceBundle,"Sources")%></span> <input class="modify" type="button" value="<%=ThemeLocalizer.getString(catalogResourceBundle,"Modify")%>"></input>
+        <div class="sourcesSelector hidden">
+            <div class="sourcesCheckboxes"></div>
+            <input class="save" type="button" value="<%=ThemeLocalizer.getString(catalogResourceBundle,"Save")%>"></input>
+        </div>
+    </div>
+    <div class="tableControl previousPage"><%=ThemeLocalizer.getString(catalogResourceBundle,"Previous")%></div>
+    <div class="tableControl refresh"><%=ThemeLocalizer.getString(catalogResourceBundle,"Refresh")%></div>
+    <div class="tableControl nextPage"><%=ThemeLocalizer.getString(catalogResourceBundle,"Next")%></div>
+	
+	<% if(context.userIsMemberOfGroup(new String[] {"1000000186","KS_VisibilityGroup_ITSSAdmin"})) {%>
+		<div class="tableControl searchValue"><label for="searchValue">On Behalf</label> <input name="searchValue" type="text"></input><input value="Search" type="button"></input></div>
+	<% } %>
+    
+	<div class="tableControl sortOrder">
+        <span><%=ThemeLocalizer.getString(catalogResourceBundle,"Sort")%></span> <select>
+            <option value="descending"><%=ThemeLocalizer.getString(catalogResourceBundle,"Latest")%></option>
+            <option value="ascending"><%=ThemeLocalizer.getString(catalogResourceBundle,"Oldest")%></option>
+        </select>
+    </div>
+    <div class="tableControl pageSize">
+        <span><%=ThemeLocalizer.getString(catalogResourceBundle,"Show")%></span> <select>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+            <option value="25">25</option>
+        </select>
+    </div>
+    <div class="clear"></div>
+</div>

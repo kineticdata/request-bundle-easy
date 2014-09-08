@@ -1,0 +1,201 @@
+<%!
+    public static class Preference {
+        public static final String FORM_NAME = "KS_SRV_Helper";
+        public static final String FIELD_INDEX_1 = "750000601";
+		public static final String FIELD_INDEX_2 = "750000602";
+		public static final String FIELD_INDEX_3 = "750000603";
+		public static final String FIELD_CHARACTER_1 = "750000001";
+		public static final String FIELD_ENTRYID = "1";
+        		
+		public static final String[] FIELD_IDS = new String[] {
+        	FIELD_INDEX_1, FIELD_INDEX_2, FIELD_INDEX_3, FIELD_CHARACTER_1, FIELD_ENTRYID
+        };
+
+        
+        
+        public static Preference[] find(HelperContext context, String qualification) {
+            Preference[] preferences = new Preference[0];		
+
+            SimpleEntry[] preferencesEntries = ArsBase.find(context, FORM_NAME, qualification, FIELD_IDS);
+            if (preferencesEntries != null && preferencesEntries.length > 0) {
+                preferences = new Preference[preferencesEntries.length];
+                for(int i=0;i<preferences.length;i++) {
+                    preferences[i] = new Preference(preferencesEntries[i]);
+                }
+            }		
+            return preferences;
+        }
+        
+		public static Preference findSingle(HelperContext context, String qualification) {
+            Preference preference = null;
+			SimpleEntry preferenceEntry = ArsBase.findSingle(context, FORM_NAME, qualification, FIELD_IDS);
+			if (preferenceEntry!=null) {
+				preference = new Preference(preferenceEntry);
+			}
+            return preference;
+        }
+		
+        public static Map<String, List<Preference>> findByUser(HelperContext context, String username) {
+            String qualification = "'Index Field1' = \"Preference\" AND 'Index Field2' = \"" + username + "\" AND 'Status' = \"Active\"";
+            Preference[] preferences = find(context, qualification);
+            Map<String, List<Preference>> result = new java.util.HashMap<String, List<Preference>>();
+            for (Preference preference : preferences) {
+                String type = preference.getType();
+                if (!result.containsKey(type)) {
+                    result.put(type, new java.util.ArrayList<Preference>());
+                }
+                result.get(type).add(preference);
+            }
+            return result;
+        }
+
+        public static Map<String, List<Preference>> createLanguage(HelperContext context, String username, String languageValue) {
+            SimpleEntry entrySave = new SimpleEntry();
+            entrySave.setSchemaName(FORM_NAME);
+            entrySave.setEntryItems(new Hashtable());
+            entrySave.setEntryFieldValue(FIELD_INDEX_1, "Preference");
+            entrySave.setEntryFieldValue(FIELD_INDEX_2, username);         
+            entrySave.setEntryFieldValue(FIELD_INDEX_3, "Language");
+            entrySave.setEntryFieldValue(FIELD_CHARACTER_1, languageValue);
+    
+            // Build the helper
+            ArsHelper helper = null;
+            try {
+                helper = new ArsHelper(context, FORM_NAME);
+            } catch (com.bmc.arsys.api.ARException e) {
+                throw new RuntimeException("Unable to initialize an ArsHelper instance.", e);
+            }
+
+            try {
+                helper.doSetSimpleEntry(entrySave);
+            } catch (Exception e) {
+                throw new RuntimeException("There was a problem saving the "+FORM_NAME+" record.", e);
+            }
+                        
+            return findByUser(context, username);
+       }
+        
+		public static void updateLanguage(HelperContext context, String username, String newLanguage) {
+            System.out.println("Starting updateLanguage find model call.");
+			
+			String qualification = "'Index Field1' = \"Preference\" AND 'Index Field2' = \"" + username + "\" AND 'Index Field3' = \"Language\" AND 'Status' = \"Active\"";
+            Preference[] language = find(context, qualification);
+            
+			System.out.println("Calling updateLanguage update model call.");
+			updateLanguage2(context, username, language[0].getEntryID(), newLanguage);
+        }
+		
+		public static void updateLanguage2(HelperContext context, String username, String entryid, String newLanguage) {
+            System.out.println("Starting updateLanguage update model call.");
+			System.out.println("username: " + username + ". entryid: " + entryid + ". newLanguage: " + newLanguage + ".");
+			SimpleEntry entrySave = new SimpleEntry();
+            entrySave.setEntryId(entryid);
+			entrySave.setSchemaName(FORM_NAME);
+            entrySave.setEntryItems(new Hashtable());
+            entrySave.setEntryFieldValue(FIELD_CHARACTER_1, newLanguage);
+    
+            // Build the helper
+            ArsHelper helper = null;
+            try {
+                helper = new ArsHelper(context, FORM_NAME);
+				System.out.println("Initialized ArsHelper instance.");
+            } catch (com.bmc.arsys.api.ARException e) {
+                throw new RuntimeException("Unable to initialize an ArsHelper instance.", e);
+            }
+
+			String updatedRecordId = null;
+            try {
+                System.out.println("Starting Simple Entry Save.");
+				updatedRecordId = helper.doSetSimpleEntry(entrySave, true);
+				System.out.println("Completed Simple Entry Save.");
+            } catch (Exception e) {
+                throw new RuntimeException("There was a problem saving the "+FORM_NAME+" record.", e);
+            }
+        }
+		
+		
+        public static void createFavorite(HelperContext context, String username, String instanceID) {
+            SimpleEntry entrySave = new SimpleEntry();
+            entrySave.setSchemaName(FORM_NAME);
+            entrySave.setEntryItems(new Hashtable());
+            entrySave.setEntryFieldValue(FIELD_INDEX_1, "Preference");
+            entrySave.setEntryFieldValue(FIELD_INDEX_2, username);         
+            entrySave.setEntryFieldValue(FIELD_INDEX_3, "Favorite");
+            entrySave.setEntryFieldValue(FIELD_CHARACTER_1, instanceID);
+    
+            // Build the helper
+            ArsHelper helper = null;
+            try {
+                helper = new ArsHelper(context, FORM_NAME);
+            } catch (com.bmc.arsys.api.ARException e) {
+                throw new RuntimeException("Unable to initialize an ArsHelper instance.", e);
+            }
+
+            try {
+                helper.doSetSimpleEntry(entrySave);
+            } catch (Exception e) {
+                throw new RuntimeException("There was a problem saving the "+FORM_NAME+" record.", e);
+            }
+
+        }
+        
+        public static void updateFavorite(HelperContext context, String username, String entryid, String status) {
+            SimpleEntry entrySave = new SimpleEntry();
+            entrySave.setSchemaName(FORM_NAME);
+            entrySave.setEntryItems(new Hashtable());
+            entrySave.setEntryFieldValue("7", status);
+            entrySave.setEntryFieldValue(FIELD_ENTRYID, entryid);
+    
+            // Build the helper
+            ArsHelper helper = null;
+            try {
+                helper = new ArsHelper(context, FORM_NAME);
+            } catch (com.bmc.arsys.api.ARException e) {
+                throw new RuntimeException("Unable to initialize an ArsHelper instance.", e);
+            }
+
+            try {
+                helper.doSetSimpleEntry(entrySave);
+            } catch (Exception e) {
+                throw new RuntimeException("There was a problem saving the "+FORM_NAME+" record.", e);
+            }
+
+        }
+
+		public static void removeFavorite(HelperContext context, String username, String instanceID) {
+            String qualification = "'Index Field1' = \"Preference\" AND 'Index Field2' = \"" + username + "\" AND 'Index Field3' = \"Favorite\" AND 'Character Field1' = \"" + instanceID + "\" AND 'Status' = \"Active\"";
+            Preference favorite = findSingle(context, qualification);
+            
+            updateFavorite(context, username, favorite.getEntryID(), "Inactive");
+        }
+		
+		public static void addFavorite(HelperContext context, String username, String instanceID) {
+			String qualification = "'Index Field1' = \"Preference\" AND 'Index Field2' = \"" + username + "\" AND 'Index Field3' = \"Favorite\" AND 'Character Field1' = \"" + instanceID + "\" AND 'Status' = \"Inactive\"";
+            Preference favorite = findSingle(context, qualification);
+
+			if(favorite!=null){
+				try {
+					updateFavorite(context, username, favorite.getEntryID(), "Active");
+				} catch (Exception e) {
+					throw new RuntimeException("There was a problem saving the "+FORM_NAME+" record.", e);
+				}
+			} else {
+				try {
+					createFavorite(context, username, instanceID);
+				} catch (Exception e) {
+					throw new RuntimeException("There was a problem saving the "+FORM_NAME+" record.", e);
+				}
+			}
+        }
+			
+		private SimpleEntry entry = null;
+
+        public Preference(SimpleEntry entry) {
+            this.entry = entry;
+        }
+
+		public String getType() {return entry.getEntryFieldValue(FIELD_INDEX_3);}
+		public String getValue() {return entry.getEntryFieldValue(FIELD_CHARACTER_1);}
+		public String getEntryID() {return entry.getEntryFieldValue(FIELD_ENTRYID);}
+    }
+%>

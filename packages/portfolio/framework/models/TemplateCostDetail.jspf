@@ -1,0 +1,75 @@
+<%!
+    // Indexed Fields: SurveyTemplate +
+    public static class TemplateCostDetail {
+        public static final String FORM_NAME = "KS_SRV_Helper";
+
+        public static final String FIELD_STATUS = "7";
+        public static final String FIELD_INDEX_FIELD_1 = "750000601";
+        public static final String FIELD_INDEX_FIELD_2 = "750000602";
+        public static final String FIELD_CHARACTER_FIELD_1 = "750000001";
+        public static final String FIELD_CHARACTER_FIELD_2 = "750000002";
+        public static final String FIELD_CHARACTER_FIELD_3 = "750000003";
+        public static final String FIELD_CHARACTER_FIELD_4 = "750000004";
+        public static final String FIELD_CHARACTER_FIELD_5 = "750000005";
+        public static final String FIELD_CHARACTER_FIELD_6 = "750000006";
+        public static final String FIELD_CHARACTER_FIELD_7 = "750000007";
+        public static final String FIELD_CHARACTER_FIELD_8 = "750000008";
+        public static final String FIELD_CHARACTER_FIELD_9 = "750000009";
+        public static final String FIELD_CHARACTER_FIELD_10 = "750000010";
+        public static final String FIELD_CHARACTER_FIELD_11 = "750000011";
+        public static final String FIELD_CHARACTER_FIELD_12 = "750000012";
+        public static final String FIELD_CHARACTER_FIELD_13 = "750000013";
+
+        public static final String[] FIELD_IDS = new String[]{
+            FIELD_STATUS, FIELD_INDEX_FIELD_1, FIELD_INDEX_FIELD_2, FIELD_CHARACTER_FIELD_1,
+            FIELD_CHARACTER_FIELD_2, FIELD_CHARACTER_FIELD_3, FIELD_CHARACTER_FIELD_4,
+            FIELD_CHARACTER_FIELD_5, FIELD_CHARACTER_FIELD_6, FIELD_CHARACTER_FIELD_7,
+            FIELD_CHARACTER_FIELD_8, FIELD_CHARACTER_FIELD_9, FIELD_CHARACTER_FIELD_10,
+            FIELD_CHARACTER_FIELD_11, FIELD_CHARACTER_FIELD_12, FIELD_CHARACTER_FIELD_13};
+
+        private SimpleEntry entry = null;
+
+        public TemplateCostDetail(SimpleEntry entry) {
+            this.entry = entry;
+        }
+
+        public static TemplateCostDetail[] find(HelperContext context, String costId) {
+            TemplateCostDetail[] results = new TemplateCostDetail[0];
+
+            String qualification =  "'" + FIELD_INDEX_FIELD_1 + "' = \"Service Request Cost Detail Line\" AND " +
+                "'" + FIELD_INDEX_FIELD_2 + "' = \"" + costId + "\" AND " +
+                "'" + FIELD_STATUS + "' = \"Active\"";
+
+            SimpleEntry[] entries = ArsBase.find(context, FORM_NAME, qualification, FIELD_IDS);
+            if (entries != null && entries.length > 0) {
+                results = new TemplateCostDetail[entries.length];
+                for(int i=0;i<results.length;i++) {
+                    results[i] = new TemplateCostDetail(entries[i]);
+                }
+            }
+
+            return results;
+        }
+
+
+        public String getDefinedInputBase() {return entry.getEntryFieldValue(FIELD_CHARACTER_FIELD_1);}
+        public String getIncurredCostFee() {return entry.getEntryFieldValue(FIELD_CHARACTER_FIELD_2);}
+        public String getActualEstimate() {return entry.getEntryFieldValue(FIELD_CHARACTER_FIELD_3);}
+        public String getExpenseType() {return entry.getEntryFieldValue(FIELD_CHARACTER_FIELD_4);}
+        public String getQuantity() {return entry.getEntryFieldValue(FIELD_CHARACTER_FIELD_5);}
+        public String getAmountUnits() {return entry.getEntryFieldValue(FIELD_CHARACTER_FIELD_6);}
+        public String getRecurringAmount() {return entry.getEntryFieldValue(FIELD_CHARACTER_FIELD_7);}
+        public String getRecurringFrequency() {return entry.getEntryFieldValue(FIELD_CHARACTER_FIELD_8);}
+        public String getCurrency() {return entry.getEntryFieldValue(FIELD_CHARACTER_FIELD_9);}
+        public String getPercentChargeable() {return entry.getEntryFieldValue(FIELD_CHARACTER_FIELD_10);}
+        public String getCostDescription() {return entry.getEntryFieldValue(FIELD_CHARACTER_FIELD_13);}
+
+        public String toJson() {
+            StringBuilder builder = new StringBuilder();
+            builder.append("{");
+            builder.append("cost description: '").append(getCostDescription()).append("'");
+            builder.append("}");
+            return builder.toString();
+        }
+    }
+%>

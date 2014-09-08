@@ -1,0 +1,50 @@
+/*
+ * This stylesheet contains style properties that apply to the messages element.
+ * There are general properties for all messages as well as properties for
+ * different types of message (examples: success, loading, error).
+ *
+ * This property defines a height on the container that will be greater than or
+ * equal to any of the message elements within.  By default the largest message
+ * div is the loading message.  This is done so that there is not an annoying
+ * shift when messages are changed.  The same effect could be achieved by
+ * styling each message type to be the same height as well.
+ */
+.messages {
+    height: 34px;
+    margin-bottom: 10px;
+}
+.messages .message {
+    border-style: solid;
+    border-width: 1px;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    padding: 5px;
+}
+.messages .message .label {
+    font-weight: bold;
+	font-size: 100%;
+}
+.messages .message.success {
+    color: #FFFFFF;
+    background-color: #4F81BD;
+    border-color: #4F81BD;
+}
+.messages .message.error {
+    color: #b94a48;
+    background-color: #f2dede;
+    border-color: #eed3d7;
+}
+.messages .message.loading {
+    color: #4F81BD;
+    background-color: #DCE6F2;
+    border-color: #4F81BD;
+}
+.messages .message.loading img {
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+.messages .message .titleRight{
+	float:right;
+	font-weight: bold;
+}

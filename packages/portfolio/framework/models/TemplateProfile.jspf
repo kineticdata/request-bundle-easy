@@ -1,0 +1,47 @@
+<%!
+    // Indexed Fields: SurveyTemplate +
+    public static class TemplateProfile {
+        public static final String FORM_NAME = "KS_SRV_Helper";
+
+        public static final String FIELD_STATUS = "7";
+        public static final String FIELD_INDEX_FIELD_1 = "750000601";
+        public static final String FIELD_INDEX_FIELD_2 = "750000602";
+        public static final String FIELD_CHARACTER_FIELD_13 = "750000013";
+
+        public static final String[] FIELD_IDS = new String[]{
+            FIELD_STATUS, FIELD_INDEX_FIELD_1, FIELD_INDEX_FIELD_2, FIELD_CHARACTER_FIELD_13};
+
+        private SimpleEntry entry = null;
+
+        public TemplateProfile(SimpleEntry entry) {
+            this.entry = entry;
+        }
+
+        public static TemplateProfile find(HelperContext context, String profileType, String profileId) {
+            TemplateProfile result = null;
+
+            String qualification =  "'" + FIELD_INDEX_FIELD_1 + "' = \"" + profileType + "\" AND " +
+                "'" + FIELD_INDEX_FIELD_2 + "' = \"" + profileId + "\" AND " +
+                "'" + FIELD_STATUS + "' = \"Active\"";
+
+            SimpleEntry entry = ArsBase.findSingle(context, FORM_NAME, qualification, FIELD_IDS);
+            if (entry != null) {
+                result = new TemplateProfile(entry);
+            }
+
+            return result;
+        }
+
+
+        public String getDescription() {return entry.getEntryFieldValue(FIELD_CHARACTER_FIELD_13);}
+
+
+        public String toJson() {
+            StringBuilder builder = new StringBuilder();
+            builder.append("{");
+            builder.append("description: '").append(getDescription()).append("'");
+            builder.append("}");
+            return builder.toString();
+        }
+    }
+%>

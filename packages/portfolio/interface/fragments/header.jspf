@@ -1,0 +1,39 @@
+<header class="main">
+    <div class="container">
+        <div class="logo-wrap">
+            <a class="logo" href="<%= bundle.getProperty("portfolioUrl")%>">
+                <img src="<%= bundle.packagePath()%>resources/images/orange-grey-folders.png" />
+                <div class="company">
+                    <span>
+                        <%= bundle.getProperty("companyName") %>
+                    </span>
+                    <span>
+                        Portfolio
+                    </span>
+                </div>
+            </a>
+            <span class="service-item-details hide">
+                :: Details
+            </span>
+        </div>
+        <button type="button" class="fa fa-bars" data-target="div.navigation-slide">
+        </button>
+        <div class="collapse">
+            <form class="catalog-search" method="get" action="<%= bundle.applicationPath()%>DisplayPage">
+                <input type="hidden" name="name" value="<%= bundle.getProperty("searchNameParamPortfolio") %>" />
+                <p>
+                    <label class="hide" for="search">Search Portfolio</label>
+                    <input id="search" class="form-control" type="search" name="q" value="<% if(request.getParameter("q") != null && !request.getParameter("q").equals("")) {%> <%= request.getParameter("q") %> <% }%>" placeholder="Search Portfolio" />
+                    <!-- span deals with button floating incorrectly next to input in ie 7 fail -->
+                    <span>
+                        <button class="btn templateButton fa fa-search" type="submit"></button>
+                    <span>
+                </p>
+            </form>
+            <ul>
+               	<%@include file="../../../../common/interface/fragments/contentUser.jspf"%>
+            </ul>
+        </div>
+    </div>
+</header>
+<div class="fixed-header-spacer"></div>

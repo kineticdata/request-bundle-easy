@@ -1,0 +1,56 @@
+<%!
+    public static class ParameterConfig {
+        private HttpServletRequest request;
+        private HelperContext context;
+        private Bundle bundle;
+		private Person person;
+        
+        public ParameterConfig(HttpServletRequest request, HelperContext context, Bundle bundle) {
+            this.request = request;
+            this.context = context;
+            this.bundle = bundle;
+			
+			// Look up an additonal record that represents the person record related
+			// to the logged in user.  This will be used by configuration of some
+			// bridge parameters.
+			this.person = Person.findByUsername(context, context.getUserName());
+			if (this.person == null) {
+				throw new RuntimeException("Could not person record for: " + context.getUserName());
+			}
+        }
+        
+        public String get(String model, String parameter) throws Exception {
+			if (request.getParameter("searchValue") != null) {
+				if (!context.userIsMemberOfGroup(new String[] {"1000000186","KS_VisibilityGroup_ITSSAdmin"})) {
+					throw new RuntimeException(context.getUserName() + " not authorized to use the search by person functionality on the activity console.");
+				} else {
+					if (parameter.equals("Submitter") || parameter.equals("Approver")) {
+						return request.getParameter("searchValue");
+					}
+					if (parameter.equals("PersonId")) {
+						Person otherPerson = Person.findByUsername(context, request.getParameter("searchValue"));
+						if (otherPerson == null) {
+							throw new RuntimeException("Could not person record for: " + request.getParameter("searchValue"));
+						}
+						return otherPerson.getPersonId();
+					}
+				}
+			} else {
+				if (parameter.equals("PersonId")) {
+					return person.getPersonId();
+				}
+				if (parameter.equals("Submitter") || parameter.equals("Approver")) {
+					return context.getUserName();
+				}
+			}
+			if (parameter.equals("Request Id")) {
+				return request.getParameter("requestId");
+			}
+			return null;
+        }
+    }
+%>
+
+
+
+

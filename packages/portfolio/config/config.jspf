@@ -1,0 +1,12 @@
+<%--
+    Catalog config
+    NOTE: This file is required.
+--%>
+<%  
+    bundle.setProperty("searchNameParamPortfolio", bundle.getProperty("slug")+"-Portfolio");
+    bundle.setProperty("portfolioDetailsUrl", bundle.applicationPath() + "DisplayPage?name="+bundle.getProperty("slug")+"-PortfolioDetails");
+    bundle.setProperty("portfolioUrl", bundle.applicationPath() + "DisplayPage?name="+bundle.getProperty("slug")+"-Portfolio");
+
+    // Boolean for displaying the logout link
+    // Boolean logoutEnabled = true;
+%>

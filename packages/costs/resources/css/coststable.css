@@ -1,0 +1,104 @@
+
+#workOrderPanels {
+    margin: 10px 0px;
+}
+ .controls {
+    float: right;
+}
+#displayContent .controls .control,
+ .controls .control {
+    background-color: #97AC8F;
+    color: white;
+    cursor: pointer;
+    float: left;
+    font-weight: bold;
+    margin-right: 5px;
+    padding: 2px;
+}
+#displayContent .controls .control:hover,
+ .controls .control:hover{
+    background-color: #ABBCA5;
+}
+ .summary{
+    float: left;
+    line-height: 20px;
+    margin: 0 15px 0 10px;
+}
+
+.tabNavigation .navigationItem {
+    cursor: pointer;
+    float: left;
+    width: 196px;
+    height: 39px;
+}
+
+
+ .tabNavigation #workOrdersNav.navigationItem {
+    background: url("../../../images/GreyRequestTab.png");
+}
+ .tabNavigation #workOrdersNav.navigationItem.active {
+    background: url("../../../images/BlueRequestTab.png");
+}
+.switches {
+    float: left;
+}
+.switches .switch {
+    background-color: #97AC8F;
+    color: white;
+    cursor: pointer;
+    float: left;
+    font-size: 1.0em;
+    font-weight: bold;
+    margin-right: 5px;
+    padding: 5px;
+}
+ .switches .switch:hover {
+    background-color: #ABBCA5;
+}
+ .switches .switch.active {
+    background-color: #5294B0;
+}
+
+
+.kd-table {
+    background-color: #E1E7DF;
+    border: 1px solid #C8C8C8;
+    border-collapse: collapse;
+    width: 100%;
+}
+.kd-table .kd-row.kd-odd {
+    background-color: #D3DBD0;
+}
+.kd-table .kd-row.kd-highlight{
+    background-color: #839B79;
+    color: #F7FFEF;
+}
+.kd-table .kd-row.kd-highlight a {
+    color: #F7FFEF;
+    text-decoration: underline;
+}
+.kd-table tr.selected {
+    background-color: #839B79 !important;
+    color: #F7FFEF;
+}
+
+.kd-table .kd-row .kd-cell {
+    border: 1px solid #C8C8C8;
+    padding: 5px;
+}
+.kd-table .kd-header {
+    #background: url("../../../images/BlueHeading.png");
+    background: #307FA0;
+    border: 1px solid #C8C8C8;
+    color: white;
+    cursor: pointer;
+    font-weight: normal;
+    /*line-height: 14px;*/
+    padding: 0 5px;
+    text-align: left;
+}
+
+.kd-table .kd-row.urgent {
+    color: #FFF8DC;
+    background-color: #B22222;
+}

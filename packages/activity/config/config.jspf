@@ -1,0 +1,9 @@
+<%-- Set the values of the packages configurable settings. --%>
+<%
+    // Store the template id of the portal page so that it can be passed to ajax
+    // requests.
+    bundle.setProperty("templateId", customerRequest.getTemplateId());
+	
+	// This is a path to the review jsp to be used by review request.
+    bundle.setProperty("reviewJsp", bundle.relativeBundlePath() + "packages/base/review.jsp");
+%>

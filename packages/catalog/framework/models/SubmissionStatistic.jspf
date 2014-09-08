@@ -1,0 +1,427 @@
+<%!
+    /**
+     * Custom submission model to satisfy the requirements of the submission console
+     */
+    public static class SubmissionStatistic {
+        public static final String FORM_NAME = "KS_SRV_CustomerSurvey_base";
+        public static final String FIELD_ID = "179";
+        public static final String FIELD_TEMPLATE_ID = "700002203";
+        public static final String FIELD_REQUEST_ID = "536870913";
+        public static final String FIELD_TEMPLATE_NAME = "700001000";
+        public static final String FIELD_ORIGINATING_FORM = "600000300";
+        public static final String FIELD_ORIGINATING_ID = "600000310";
+        public static final String FIELD_ORIGINATING_REQUEST_ID = "700088607";
+        public static final String FIELD_SUBMIT_TYPE = "700088475";
+        public static final String FIELD_SURVEY_COMPLETED_DATE = "700001285";
+        public static final String FIELD_SURVEY_SENT_DATE = "700001282";
+        public static final String FIELD_MODIFIED_DATE = "6";
+        // Represents the state of the Request.  It's the display status meant to be communicated to the client
+        public static final String FIELD_VALIDATION_STATUS = "700002400";
+        public static final String FIELD_CUSTOMER_SURVEY_STATUS = "7";
+        public static final String FIELD_TYPE = "600000600";
+        // Typically contains the cancellation notes
+        public static final String FIELD_NOTES_FOR_CUSTOMER = "600003021";
+        // Requested For First Name
+        public static final String FIELD_ATTRIBUTE_5 = "300299800";
+        // Requested For Last Name
+        public static final String FIELD_ATTRIBUTE_6 = "700001806";
+        public static final String FIELD_NOTES = "600003021";
+        // Represents the status of the Request including task workflow (This is
+        // a Enumeration field that allows values of 'Open' or 'Closed' and is
+        // typically set by the KineticRequest_Submission_Close handler).
+        public static final String FIELD_REQUEST_STATUS = "700089541";
+        public static final String FIELD_CREATE_DATE = "3";
+        public static final String FIELD_REQUEST_CLOSED_DATE = "700088489";
+        // Ticket Number, primary key of ticketing application, INC, CHG numbers
+        public static final String FIELD_ATTRIBUTE_52 = "700001852";
+        // Ticketing Application, will contain Remedy form name or any ticketing application name
+        public static final String FIELD_ATTRIBUTE_53 = "700001853";
+        public static final String FIELD_ATTRIBUTE_54 = "700001854";
+
+        public static final String[] FIELD_IDS = new String[] {
+            FIELD_TEMPLATE_NAME, FIELD_SURVEY_COMPLETED_DATE, FIELD_CREATE_DATE
+        };
+
+        private SimpleEntry entry = null;
+
+        public SubmissionStatistic(SimpleEntry entry) {
+            this.entry = entry;
+        }
+
+        public static SubmissionStatistic[] findRecent(HelperContext context, String catalogName, String templateName, Long startTime) {
+            SubmissionStatistic[] result = new SubmissionStatistic[0];
+
+            String qualification = "'Category' = \""+catalogName+"\" AND "+
+                "'Survey_Template_Name' = \""+templateName+"\" AND "+
+                "'SurveyCompletedDate' >= "+startTime;
+
+            SimpleEntry[] entries = ArsBase.find(context, FORM_NAME, qualification, FIELD_IDS);
+            if (entries != null) {
+                result = new SubmissionStatistic[entries.length];
+                for (int i=0;i<entries.length;i++) {
+                    result[i] = new SubmissionStatistic(entries[i]);
+                }
+            }
+
+            return result;
+        }
+		
+		public static SubmissionStatistic[] findRecent(HelperContext context, String catalogName, Long startTime) {
+            SubmissionStatistic[] result = new SubmissionStatistic[0];
+
+            String qualification = "'Category' = \""+catalogName+"\" AND "+
+                "'SurveyCompletedDate' >= "+startTime;
+
+            SimpleEntry[] entries = ArsBase.find(context, FORM_NAME, qualification, FIELD_IDS);
+            if (entries != null) {
+                result = new SubmissionStatistic[entries.length];
+                for (int i=0;i<entries.length;i++) {
+                    result[i] = new SubmissionStatistic(entries[i]);
+                }
+            }
+
+            return result;
+        }
+		
+		public static SubmissionStatistic[] findRecentMissedSLA(HelperContext context, String catalogName, Long startTime) {
+            SubmissionStatistic[] result = new SubmissionStatistic[0];
+
+            String qualification = "'Category' = \""+catalogName+"\" AND "+
+				"'Attribute64' != $NULL$ AND " +
+                "'SurveyCompletedDate' >= "+startTime;
+
+            SimpleEntry[] entries = ArsBase.find(context, FORM_NAME, qualification, FIELD_IDS);
+            if (entries != null) {
+                result = new SubmissionStatistic[entries.length];
+                for (int i=0;i<entries.length;i++) {
+                    result[i] = new SubmissionStatistic(entries[i]);
+                }
+            }
+
+            return result;
+        }
+		
+		public static SubmissionStatistic[] findApprovals(HelperContext context, String catalogName, Long startTime) {
+            SubmissionStatistic[] result = new SubmissionStatistic[0];
+
+            String qualification = "'Category' = \""+catalogName+"\" AND "+
+				"'Submit Type' = \"Approval\" AND " +
+				"'Status' < \"Completed\" AND " +
+                "'Create Date' >= "+startTime;
+
+            SimpleEntry[] entries = ArsBase.find(context, FORM_NAME, qualification, FIELD_IDS);
+            if (entries != null) {
+                result = new SubmissionStatistic[entries.length];
+                for (int i=0;i<entries.length;i++) {
+                    result[i] = new SubmissionStatistic(entries[i]);
+                }
+            }
+
+            return result;
+        }
+		
+        public String getTemplateName() {return entry.getEntryFieldValue(FIELD_TEMPLATE_NAME);}
+        public String getSubmittedAt() {return entry.getEntryFieldValue(FIELD_SURVEY_COMPLETED_DATE);}
+		public String getCreatedAt() { return entry.getEntryFieldValue(FIELD_CREATE_DATE);}
+		
+        /**
+         * Return in the format of:
+         *   {
+         *      "categories": ["01", "02", "03", "04", ...],
+         *      "data": [5, 6, 7, 11, ...]
+         *   }
+         */
+		 
+		 /* Used in 'Portfolio Details' */
+		 
+        public static String getRecentSubmissionJsonData(HelperContext context, String catalogName, String templateName) {
+            List<String> days = new ArrayList<String>();
+            Map<String,Integer> dayCounts = new LinkedHashMap<String,Integer>();
+         
+            // Initialize a simple date format to parse the submission date strings
+            SimpleDateFormat inputFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+            // Initialize a simple date format to parse the submission date strings
+            SimpleDateFormat outputFormat = new SimpleDateFormat("MMM dd");
+            
+            // Initialize a calendar instance
+            Calendar calendar = Calendar.getInstance();
+            // Initialize a calendar to 29 days ago and truncate hours/minutes/seconds
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            calendar.add(Calendar.DAY_OF_MONTH, -30);
+            // Determine the start date
+            Long startTime = calendar.getTimeInMillis() / 1000;
+         
+            // For each of the past 30 days (including today)
+            for (int i=0;i<30;i++) {
+                // Set the calendar to that day
+                calendar.add(Calendar.DAY_OF_MONTH, 1);
+                // Format the day to be a two digit day string
+                String day = outputFormat.format(calendar.getTime());
+                // Add the category 
+                days.add(day);
+                // Initialize the category count to 0
+                dayCounts.put(day, 0);
+            }
+         
+            // Retrieve the recent submissions
+            SubmissionStatistic[] submissions = findRecent(context, catalogName, templateName, startTime);
+            
+            // For each of the recent submissions
+            for (SubmissionStatistic submission : submissions) {
+                // Parse the date string
+                Date date = null;
+                try {
+                    date = inputFormat.parse(submission.getSubmittedAt());
+                } catch (Exception e) { 
+                    throw new RuntimeException("Unable to parse date: "+submission.getSubmittedAt(), e); 
+                }
+                // Set the calendar's date
+                calendar.setTimeInMillis(date.getTime());
+                // Format the day to be a two digit day string
+                String day = outputFormat.format(calendar.getTime());
+                // Add one to the day's count
+                Integer count = dayCounts.get(day);
+                if (count != null) {
+                    dayCounts.put(day, count+1);
+                }
+            }
+         
+            // Build the result
+            Map<String,Object> result = new LinkedHashMap<String,Object>();
+            result.put("days", days);
+            result.put("counts", dayCounts.values());
+            // Return the JSON string
+            return JSONValue.toJSONString(result);
+        }
+		
+		/* Used in 'Administration Console' */
+		public static String getRecentSubmissionJsonDataAll(HelperContext context, String catalogName) {
+            List<String> days = new ArrayList<String>();
+            Map<String,Integer> dayCounts = new LinkedHashMap<String,Integer>();
+         
+            // Initialize a simple date format to parse the submission date strings
+            SimpleDateFormat inputFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+            // Initialize a simple date format to parse the submission date strings
+            SimpleDateFormat outputFormat = new SimpleDateFormat("MMM dd");
+            
+            // Initialize a calendar instance
+            Calendar calendar = Calendar.getInstance();
+            // Initialize a calendar to 29 days ago and truncate hours/minutes/seconds
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            calendar.add(Calendar.DAY_OF_MONTH, -30);
+            // Determine the start date
+            Long startTime = calendar.getTimeInMillis() / 1000;
+         
+            // For each of the past 30 days (including today)
+            for (int i=0;i<30;i++) {
+                // Set the calendar to that day
+                calendar.add(Calendar.DAY_OF_MONTH, 1);
+                // Format the day to be a two digit day string
+                String day = outputFormat.format(calendar.getTime());
+                // Add the category 
+                days.add(day);
+                // Initialize the category count to 0
+                dayCounts.put(day, 0);
+            }
+         
+            // Retrieve the recent submissions
+            SubmissionStatistic[] submissions = findRecent(context, catalogName, startTime);
+            
+            // For each of the recent submissions
+            for (SubmissionStatistic submission : submissions) {
+                // Parse the date string
+                Date date = null;
+                try {
+                    date = inputFormat.parse(submission.getSubmittedAt());
+                } catch (Exception e) { 
+                    throw new RuntimeException("Unable to parse date: "+submission.getSubmittedAt(), e); 
+                }
+                // Set the calendar's date
+                calendar.setTimeInMillis(date.getTime());
+                // Format the day to be a two digit day string
+                String day = outputFormat.format(calendar.getTime());
+                // Add one to the day's count
+                Integer count = dayCounts.get(day);
+                if (count != null) {
+                    dayCounts.put(day, count+1);
+                }
+            }
+         
+            // Build the result
+            Map<String,Object> result = new LinkedHashMap<String,Object>();
+            result.put("days", days);
+            result.put("counts", dayCounts.values());
+            // Return the JSON string
+            return JSONValue.toJSONString(result);
+        }
+		
+		/* Used in 'Administration Console' */
+		public static String getRecentMissedSLAJsonDataAll(HelperContext context, String catalogName) {
+            List<String> days = new ArrayList<String>();
+            Map<String,Integer> dayCounts = new LinkedHashMap<String,Integer>();
+         
+            // Initialize a simple date format to parse the submission date strings
+            SimpleDateFormat inputFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+            // Initialize a simple date format to parse the submission date strings
+            SimpleDateFormat outputFormat = new SimpleDateFormat("MMM dd");
+            
+            // Initialize a calendar instance
+            Calendar calendar = Calendar.getInstance();
+            // Initialize a calendar to 29 days ago and truncate hours/minutes/seconds
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            calendar.add(Calendar.DAY_OF_MONTH, -30);
+            // Determine the start date
+            Long startTime = calendar.getTimeInMillis() / 1000;
+         
+            // For each of the past 30 days (including today)
+            for (int i=0;i<30;i++) {
+                // Set the calendar to that day
+                calendar.add(Calendar.DAY_OF_MONTH, 1);
+                // Format the day to be a two digit day string
+                String day = outputFormat.format(calendar.getTime());
+                // Add the category 
+                days.add(day);
+                // Initialize the category count to 0
+                dayCounts.put(day, 0);
+            }
+         
+            // Retrieve the recent submissions
+            SubmissionStatistic[] submissions = findRecentMissedSLA(context, catalogName, startTime);
+            
+            // For each of the recent submissions
+            for (SubmissionStatistic submission : submissions) {
+                // Parse the date string
+                Date date = null;
+                try {
+                    date = inputFormat.parse(submission.getSubmittedAt());
+                } catch (Exception e) { 
+                    throw new RuntimeException("Unable to parse date: "+submission.getSubmittedAt(), e); 
+                }
+                // Set the calendar's date
+                calendar.setTimeInMillis(date.getTime());
+                // Format the day to be a two digit day string
+                String day = outputFormat.format(calendar.getTime());
+                // Add one to the day's count
+                Integer count = dayCounts.get(day);
+                if (count != null) {
+                    dayCounts.put(day, count+1);
+                }
+            }
+         
+            // Build the result
+            Map<String,Object> result = new LinkedHashMap<String,Object>();
+            result.put("days", days);
+            result.put("counts", dayCounts.values());
+            // Return the JSON string
+            return JSONValue.toJSONString(result);
+        }
+		
+		/* Used in 'Administration Console' */
+		public static String getAgingJsonDataAll(HelperContext context, String catalogName) {
+            List<String> days = new ArrayList<String>();
+            Map<String,Integer> dayCounts = new LinkedHashMap<String,Integer>();
+         
+            // Initialize a simple date format to parse the submission date strings
+            SimpleDateFormat inputFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+            // Initialize a simple date format to parse the submission date strings
+            SimpleDateFormat outputFormat = new SimpleDateFormat("MMM dd");
+            
+            // Initialize a calendar instance
+            Calendar calendar = Calendar.getInstance();
+            // Initialize a calendar to 14 days ago and truncate hours/minutes/seconds
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            calendar.add(Calendar.DAY_OF_MONTH, -15);
+            // Determine the start date
+            Long startTime = calendar.getTimeInMillis() / 1000;
+            Long timeNow = System.currentTimeMillis() / 1000;
+         
+            // For each of the past 15 days (including today)
+            for (int i=0;i<15;i++) {
+                // Add the days to the string array.
+				days.add(String.valueOf(i));
+                // Initialize the category count to 0
+                dayCounts.put(String.valueOf(i), 0);
+            }
+         
+            // Retrieve the recent submissions
+            SubmissionStatistic[] submissions = findApprovals(context, catalogName, startTime);
+            
+            
+            // For each of the recent submissions
+            for (SubmissionStatistic submission : submissions) {
+                // Parse the date string
+                Date date = null;
+				
+				try {
+                    date = inputFormat.parse(submission.getCreatedAt());
+                } catch (Exception e) { 
+                    throw new RuntimeException("Unable to parse date: "+submission.getCreatedAt(), e); 
+                }
+
+				// Calculate diff between start day and CreatedAt date
+				Long timeDiff = timeNow - (date.getTime()/1000);
+                // Determine days different, convert to string.
+				String day = Long.toString(timeDiff/(24*60*60));
+				
+                // Add one to the day's count
+                Integer count = dayCounts.get(day);
+                if (count != null) {
+                    dayCounts.put(day, count+1);
+                }
+            }
+         
+            // Build the result
+            Map<String,Object> result = new LinkedHashMap<String,Object>();
+            result.put("days", days);
+            result.put("counts", dayCounts.values());
+            // Return the JSON string
+            return JSONValue.toJSONString(result);
+        }
+        
+        /* Used in 'Administration Console' */
+		public static String getServiceItemJsonDataAll(HelperContext context, String catalogName) {
+            Map<String,Integer> itemCounts = new LinkedHashMap<String,Integer>();
+
+            // Initialize a calendar instance
+            Calendar calendar = Calendar.getInstance();
+            // Initialize a calendar to 29 days ago and truncate hours/minutes/seconds
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            calendar.add(Calendar.DAY_OF_MONTH, -30);
+            // Determine the start date
+            Long startTime = calendar.getTimeInMillis() / 1000;
+                  
+            // Retrieve the recent submissions
+            SubmissionStatistic[] submissions = findRecent(context, catalogName, startTime);
+            
+            // For each of the recent submissions
+            for (SubmissionStatistic submission : submissions) {
+                // Store the template Name 
+                String serviceItemName = submission.getTemplateName();
+                // Add one to the template's count
+                Integer count = itemCounts.get(serviceItemName);
+                if (count != null) {
+                    itemCounts.put(serviceItemName, count+1);
+                } else {
+                    itemCounts.put(serviceItemName, 1);
+                }
+            }
+            
+            return JSONValue.toJSONString(itemCounts);
+        }
+    }
+%>

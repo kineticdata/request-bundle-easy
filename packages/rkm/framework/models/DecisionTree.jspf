@@ -1,0 +1,42 @@
+<%!
+    public static class DecisionTree {
+        public static final String FORM_NAME = "RKM:DecisionTreeTemplate_Manageable_Join";
+        public static final int FIELD_TITLE = 302300502;
+        public static final int FIELD_DECISION_TREE = 302311212;
+        public static final int FIELD_AUTHOR = 302300527;
+        public static final int FIELD_ID = 302300507;
+        public static final int[] FIELD_IDS = new int[] {
+            FIELD_TITLE, FIELD_DECISION_TREE, FIELD_AUTHOR, FIELD_ID};
+
+        public static DecisionTree findById(com.bmc.arsys.api.ARServerUser serverUser, String id) throws com.bmc.arsys.api.ARException {
+            String qualification = "'"+FIELD_ID+"' = \""+id+"\"";
+            com.bmc.arsys.api.QualifierInfo qual = serverUser.parseQualification(FORM_NAME, qualification);
+            com.bmc.arsys.api.Entry entry = serverUser.getOneEntryObject(
+                FORM_NAME, qual, null, FIELD_IDS, false, null);
+            if (entry == null) {
+                return null;
+            } else {
+                return new DecisionTree(entry);
+            }
+        }
+
+        private com.bmc.arsys.api.Entry entry;
+        public DecisionTree(com.bmc.arsys.api.Entry entry) {
+            this.entry = entry;
+        }
+
+        public String getTitle() {return getValue(FIELD_TITLE);}
+        public String getDecisionTree() {return getValue(FIELD_DECISION_TREE);}
+        public String getAuthor() {return getValue(FIELD_AUTHOR);}
+        public String getId() {return getValue(FIELD_ID);}
+
+        public String getValue(int fieldId) {
+            Object value = entry.get(fieldId).getValue();
+            if (value == null) {
+                return null;
+            } else {
+                return value.toString();
+            }
+        }
+    }
+%>

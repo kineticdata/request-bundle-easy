@@ -1,0 +1,4 @@
+<div id="contentFooter">
+	<a href="http://www.acme.com/">ACME</a> | 
+    <a href="<%= bundle.getProperty("feedbackUrl")%>" target="_blank">Feedback</a>
+</div>

@@ -1,0 +1,90 @@
+<%@page import="com.kd.arsHelpers.*"%>
+<%@page import="java.util.*"%>
+<%!
+    public abstract static class ArsBase {
+        public static SimpleEntry[] find(HelperContext context, String formName, String qualification, String[] fieldIds) {
+            return find(context, formName, qualification, fieldIds, new String[0], 0, 0, 1);
+        }
+
+        public static SimpleEntry[] find(HelperContext context, String formName, String qualification, String[] fieldIds, String[] sortFieldIds) {
+            return find(context, formName, qualification, fieldIds, sortFieldIds, 0, 0, 1);
+        }
+
+        public static SimpleEntry[] find(HelperContext context, String formName, String qualification, String[] fieldIds, Integer count) {
+            return find(context, formName, qualification, fieldIds, new String[0], count, 0, 1);
+        }
+
+        public static SimpleEntry[] find(HelperContext context, String formName, String qualification, String[] fieldIds, String[] sortFieldIds, Integer chunkSize, Integer recordOffset, Integer order) {
+            // Declare the result
+            SimpleEntry[] results = new SimpleEntry[0];
+
+            // Verify that context is not null
+            if (context == null) {
+                throw new IllegalArgumentException("The \"context\" argument can't be null.");
+            }
+
+            // Build the helper
+            ArsPrecisionHelper helper = null;
+            try {
+                helper = new ArsPrecisionHelper(context);
+            } catch (com.bmc.arsys.api.ARException e) {
+                throw new RuntimeException("Unable to initialize an ArsHelper instance.", e);
+            }
+
+            // Retrieve the entry records
+            SimpleEntry[] entries = new SimpleEntry[0];
+            try {
+                entries = helper.getSimpleEntryList(formName, qualification, fieldIds, sortFieldIds, chunkSize, recordOffset, order);
+            } catch (Exception e) {
+                throw new RuntimeException("There was a problem retrieving the "+formName+" records.", e);
+            }
+
+            // If there were results
+            if (entries != null && entries.length > 0) {
+                results = entries;
+            }
+
+            // Return the result
+            return results;
+        }
+
+        public static SimpleEntry findSingle(HelperContext context, String formName, String qualification, String[] fieldIds) {
+            SimpleEntry result = null;
+
+            SimpleEntry[] entries = find(context, formName, qualification, fieldIds);
+
+            if (entries.length > 1) {
+                throw new RuntimeException("Multiple results matched the "+formName+" find single query: "+qualification);
+            } else if (entries.length == 1) {
+                result = entries[0];
+            }
+
+            return result;
+        }
+
+        public static SimpleEntry findByRequestId(HelperContext context, String formName, String id, String[] fieldIds) {
+            return findSingle(context, formName, "'1'=\""+id+"\"", fieldIds);
+        }
+
+        public static SimpleEntry findByInstanceId(HelperContext context, String formName, String id, String[] fieldIds) {
+            return findSingle(context, formName, "'179'=\""+id+"\"", fieldIds);
+        }
+
+        public static Integer count(HelperContext context, String formName, String qualification) {
+            // Declare the result
+            com.bmc.arsys.api.OutputInteger result = new com.bmc.arsys.api.OutputInteger(0);
+            try {
+                // Parse the qualification
+                com.bmc.arsys.api.QualifierInfo qualifier = 
+                        context.getContext().parseQualification(formName, qualification);
+                // Do an "empty" retrieval (of no more than 1 record), storing the count in result
+                context.getContext().getListEntry(formName, qualifier, 0, 1, null, null, false, result);
+            }
+            catch (com.bmc.arsys.api.ARException e) {
+                throw new RuntimeException(e);
+            }
+            // Return the result
+            return new Integer(result.intValue());
+        }
+    }
+%>

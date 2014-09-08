@@ -1,0 +1,11 @@
+<%--
+    Package specific config
+--%>
+<%
+    bundle.setProperty("apiPath", "/request-api/app/api/1.0");
+    bundle.setProperty("oscCatalogName", bundle.getProperty("catalogName"));
+    bundle.setProperty("oscDisplayStatuses", "Awaiting Approval,Approved,Denied,Expired,In Progress");
+    bundle.setProperty("oscTemplateFilter", "'Catalog Name' = \""+bundle.getProperty("oscCatalogName")+"\" AND 'Type' != \"Launcher\" AND 'Type' != \"Portal\" AND 'Type' != \"Approve Template\" AND 'Type' != \"Cloud\"");
+    bundle.setProperty("submissionDetailsUrl", bundle.applicationPath() + "DisplayPage?name="+bundle.getProperty("slug")+"-OSCDetails");
+    bundle.setProperty("submissionReviewUrl", bundle.applicationPath() + "ReviewRequest");
+%>

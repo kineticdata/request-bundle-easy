@@ -1,0 +1,67 @@
+<%!
+    /**
+     * TODO: Description of class
+     */
+    public static class PackageHelper {
+
+        // Declare the private variables
+        private Bundle bundle;
+
+        // Document
+        public PackageHelper(Bundle bundle) {
+            this.bundle = bundle;
+        }
+        
+        public static String timeAgo(java.util.Date pastDate) {
+            // Create a date object that represents the current date and time.
+            java.util.Date currentDate = new java.util.Date();
+            
+            // Create double values for each time segment we will recognize.
+            // Note that these values are the number of milliseconds in each
+            // time segment because when converting date objects to long values
+            // we get the value in milliseconds.  Also we use double values so
+            // that we get decimals that can be rounded when doing the division
+            // operations below.
+            double year = 365 * 24 * 60 * 60 * 1000.0;
+            double month = 30 * 24 * 60 * 60 * 1000.0;
+            double day = 24 * 60 * 60 * 1000.0;
+            double hour = 60 * 60 * 1000.0;
+            double minute = 60 * 1000.0;
+            double second = 1000.0;
+
+            // Calculate the difference between the current date time and the
+            // date time that was passed to the function.
+            long difference = currentDate.getTime() - pastDate.getTime();
+            
+            // Check for each time segment if the interval is greater than or
+            // equal to that segment, if it is we will return a value in terms
+            // of the segment.  If it is smaller then we check the next smallest
+            // time segment.
+            long number;
+            String unit;
+            if (difference >= year) {
+                number = Math.round(difference / year);
+                unit = "year";
+            } else if (difference >= month) {
+                number = Math.round(difference / month);
+                unit = "month";
+            } else if (difference >= day) {
+                number = Math.round(difference / day);
+                unit = "day";
+            } else if (difference >= hour) {
+                number = Math.round(difference / hour);
+                unit = "hour";
+            } else if (difference >= minute) {
+                number = Math.round(difference / minute);
+                unit = "minute";
+            } else {
+                number = Math.round(difference / second);
+                unit = "second";
+            }
+            String timeAgo = Long.toString(number) + " " + unit;
+            if (number != 1)
+                timeAgo = timeAgo + "s";
+            return timeAgo;
+        }
+    }
+%>

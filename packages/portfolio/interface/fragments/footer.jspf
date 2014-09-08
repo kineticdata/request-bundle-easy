@@ -1,0 +1,16 @@
+<!-- Footer -->
+<footer class="footer">
+    <span style="display:none">&nbsp;</span>
+    <div class="container" style="text-align: center;">
+        <span class="left">
+            <a href="<%= bundle.getProperty("aboutUrl")%>">
+                About
+            </a>
+        </span>
+        <span class="right">
+            <a href="<%= bundle.getProperty("feedbackUrl")%>">
+                Site Feedback
+            </a>
+        </span>
+    </div>
+</footer>

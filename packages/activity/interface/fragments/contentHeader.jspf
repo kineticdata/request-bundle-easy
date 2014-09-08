@@ -1,0 +1,28 @@
+<div id="contentHeader">    
+    <div>
+        <a href="<%= bundle.getProperty("catalogUrl")%>">
+            <img alt="<%= bundle.getProperty("companyName") %>" class="logoHeader" src="<%= bundle.bundlePath()%>common/resources/images/logo.png" />
+        </a>
+    </div>
+    <% if (context != null) {%>
+    <div class="userInfo">
+        logged in as <a href="javascript:void(0)"><%= context.getUserName()%></a> | 
+        <a href="<%= bundle.getProperty("logoutUrl")%>">logout</a>
+    </div>
+    <% } else {%>
+    <div class="userInfo">not logged in | <a href="<%= bundle.getProperty("loginUrl")%>">login</a></div>
+    <% }%>
+    <%--
+	<div class="userLanguage">Language
+        <select name="Language">
+            <option value="English">English</option>
+            <option value="Italian">Italian</option>
+            <option value="French">French</option>
+            <option value="German">German</option>
+            <option value="Japanese">Japanese</option>
+            <option value="Chinese">Chinese</option>
+        </select>
+    </div>
+	--%>
+    <div class="clear"></div>
+</div>

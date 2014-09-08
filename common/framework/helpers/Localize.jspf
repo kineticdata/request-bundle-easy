@@ -1,0 +1,49 @@
+<%!
+    public static class ThemeLocalizer {
+        public static String preferredLocale="";
+		
+        public static java.util.ResourceBundle getResourceBundle(String bundleName, String preferredLocale, String languageTranslationBase, String packagePath){
+            java.util.ResourceBundle rb=null;
+            if (preferredLocale.length()>0){
+				String fileTranslationPath = languageTranslationBase + packagePath + "/resources/languages";
+				File file = new File(fileTranslationPath);
+				try {
+					URL[] urls = {file.toURI().toURL()};
+					ClassLoader loader = new URLClassLoader(urls);
+					String vals[] = preferredLocale.split("_");
+					rb = java.util.ResourceBundle.getBundle(bundleName, new Locale(vals[0], (vals.length>1)?vals[1]:""), loader,
+						new java.util.ResourceBundle.Control() {
+							public long getTimeToLive(String  baseName,Locale locale) {
+								return 0;
+							}
+						}
+					);
+				} catch (MalformedURLException e) {
+					System.err.println("Caught MalformedURLException: " + e.getMessage());
+				}
+            }else {
+                   rb = java.util.ResourceBundle.getBundle(bundleName,
+				     new java.util.ResourceBundle.Control() {
+					    public long getTimeToLive(String  baseName,Locale locale) {
+							return 0;
+						}
+				   });
+            }
+            
+            return rb;
+        }
+		
+        public static String getString(java.util.ResourceBundle resourceBundle, String key) {
+            try {
+                String formatKey=key.replaceAll(" ","_");
+                String translatedString=resourceBundle.getString(formatKey);
+                if (translatedString.equals(formatKey)){
+                    return key;
+                } 
+                return translatedString;
+            } catch(Exception e){
+                return key;
+            }
+        }
+    }
+%>

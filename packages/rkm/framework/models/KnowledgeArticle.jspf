@@ -1,0 +1,45 @@
+<%!
+    public static class KnowledgeArticle {
+        public static final String FORM_NAME = "RKM:KnowledgeArticleManager";
+        public static final int FIELD_ID = 1;
+        public static final int FIELD_INSTANCE_ID = 179;
+        public static final int FIELD_DOC_ID = 302300507;
+        public static final int FIELD_TITLE = 302300502;
+        public static final int FIELD_COMPANY = 1000000001;
+               
+        public static final int[] FIELD_IDS = new int[] {
+            FIELD_ID, FIELD_DOC_ID, FIELD_INSTANCE_ID, FIELD_TITLE, FIELD_COMPANY};
+
+        public static KnowledgeArticle findById(com.bmc.arsys.api.ARServerUser serverUser, String id) throws com.bmc.arsys.api.ARException {
+            String qualification = "'"+FIELD_DOC_ID+"' = \""+id+"\"";
+            com.bmc.arsys.api.QualifierInfo qual = serverUser.parseQualification(FORM_NAME, qualification);
+            com.bmc.arsys.api.Entry entry = serverUser.getOneEntryObject(
+                FORM_NAME, qual, null, FIELD_IDS, false, null);
+            if (entry == null) {
+                return null;
+            } else {
+                return new KnowledgeArticle(entry);
+            }
+        }
+
+        private com.bmc.arsys.api.Entry entry;
+        public KnowledgeArticle(com.bmc.arsys.api.Entry entry) {
+            this.entry = entry;
+        }
+
+        public String getId() {return getValue(FIELD_ID);}
+        public String getInstanceId() {return getValue(FIELD_INSTANCE_ID);}
+        public String getDocId() {return getValue(FIELD_DOC_ID);}
+        public String getTitle() {return getValue(FIELD_TITLE);}
+        public String getCompany() {return getValue(FIELD_COMPANY);}
+        
+        public String getValue(int fieldId) {
+            Object value = entry.get(fieldId).getValue();
+            if (value == null) {
+                return null;
+            } else {
+                return value.toString();
+            }
+        }
+    }
+%>

@@ -1,0 +1,9 @@
+<%-- Set the values of the themes configurable settings. --%>
+<%
+    bundle.setProperty("rkmAdminUsername", systemContext.getUserName());
+    bundle.setProperty("rkmAdminPassword", systemContext.getPassword());
+    bundle.setProperty("rkmServer", "demobmc8.kineticdata.com");
+    bundle.setProperty("rkmLocale", "");
+    bundle.setProperty("rkmPort", "3000");
+    bundle.setProperty("commentUrl", pathHelper.templateNameUrl(bundle.getProperty("slug") + "-RKMComment"));
+%>

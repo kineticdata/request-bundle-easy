@@ -1,0 +1,232 @@
+<%-- 
+	//Form entitlement
+	//TODO:  Move form entitlement elsewhere.  It is not a language issue.
+	
+	//TODO:  Figure out what group(s) should have visibility to ALL service items (i.e., service desk users, administrators)
+	//       Add appropriate code below.  Currently set for Administrators
+	Boolean b_allVisibility=context.userIsMemberOfGroup(new String[] {"Administrator"});
+	String allVisibility = b_allVisibility.toString();
+	
+	//TODO:  Determine if regional visibility is necessary.  This section shows visibility by geographic regions.
+    //       Regions are attached to the person's record elsewhere.  The regions are matched to security groups using
+	//       the code below.  The security groups are attached to the service items in the 'Visible To Group' field on 
+	//       the Catalog Management Console.
+	//       This approach of permissions doesn't require that each user be added to a "regional" permission/security group.
+	//       A similar approach could be used for displaying content based on the user's department or division, or some 
+	//       other criteria, such as site.
+	KSSamplePeople person = KSSamplePeople.findByUsername(context,context.getUserName());
+	String personRegion = person.getRegion();
+	String regionLookupGroup = "24250";
+	if (personRegion.equals("NA")){
+		regionLookupGroup = "24251";
+	} else if (personRegion.equals("EMEA")){
+		regionLookupGroup = "24253";
+	} else if (personRegion.equals("APAC")){
+		regionLookupGroup = "24252";
+	} else if (personRegion.equals("CSA")){
+		regionLookupGroup = "24254";
+	} else if (personRegion.equals("USA")){
+		regionLookupGroup = "24260";
+	} else if (personRegion.equals("AUS")){
+		regionLookupGroup = "24261";
+	}
+	<script type="text/javascript">
+		var regionLookupGroup="<%=regionLookupGroup%>"
+		//Change/Add group names, separated by commas.
+		var allVisibility="<%=context.userIsMemberOfGroup(new String[] {"Administrator"})%>"
+	</script>
+--%>
+	
+<%
+	//TODO:  Move the preference gathering outside this file??  "Preference Helper" or something??
+	//       Because preferences are shared resources/data (not just language), it should be extracted.
+	//       Maybe just into the commonInitialization file?
+	
+	//Retrieve the user's preferences from helper using the preference model
+	Map<String, List<Preference>> preferences = Preference.findByUser(context, context.getUserName());
+    
+	//If no language preference record is found, create one for the user.
+    if (!preferences.containsKey("Language")){
+        preferences = Preference.createLanguage(context,context.getUserName(),request.getLocale().toString());
+    }
+    
+    String language = preferences.get("Language").get(0).getValue();
+	
+	//Check for a preferredLocale cookie.  If it doesn't exist, add a cookie storing the preferredLocale and use
+	//the users preferred language.
+	String preferredLocaleCookie = CookieHelper.getCookieValue(request,"preferredLocale");
+	if (preferredLocaleCookie == null) {
+		CookieHelper.setCookieValue(response,"preferredLocale",language);
+		preferredLocaleCookie = language;
+	}
+
+	//Set currentlanguage variable to the preferredLocale cookie (if the cookie exists).
+	//String currentLang="";
+	String currentLang = CookieHelper.getCookieValue(request,"preferredLocale");
+	//currentLang = ThemeLocalizer.getPreferredLocale(request.getCookies());
+	if (currentLang == null) {
+		currentLang = "";
+	}
+	//TODO:  Do this elsewhere.  This is too specific to a single implementation.  The purpose of the currentLang value
+    //       is to setting the selected value in the language drop down list on the form.  This should be done where the
+	//       language drop down is created -- look first for an exact match.  If not found, substring to the
+	//       first two values and look again.
+	
+	//       Actually, this is also used below to match the initial display language of the template to the user's
+	//       current langauge setting.  Therefore, this is now handled as part of that function at line 123.
+	
+	// if (!currentLang.equals("")){
+		// if ((!currentLang.equals("es_ES")) && (!currentLang.equals("pt_PT")) && (!currentLang.equals("pt_BR"))){
+			// currentLang = currentLang.substring(0,2);
+		// }
+	// }
+	
+	//Determine the template display language.
+	//Start by setting an overall default language in the event an attribute hasn't been set on the template
+	String displayLanguage=bundle.getProperty("catalogDefaultLanguage");
+
+	//Retrieve any session language settings for this form
+	String sessionTemplateLanguage=(String)session.getAttribute(customerSurvey.getSurveyTemplateInstanceID()+"-DisplayLanguage");
+	
+	//Set the default catalog's default language as the overall displayed language default
+	String defaultLanguage=bundle.getProperty("catalogDefaultLanguage");
+	
+	TemplateAttribute[] templateLanguagesAttributes = TemplateAttribute.getAttributeValue(context,(String)customerSurvey.getSurveyTemplateInstanceID(),"Form Language");
+	String[] templateLanguagesArray = new String[0];
+		if (templateLanguagesAttributes != null && templateLanguagesAttributes.length > 0) {
+			templateLanguagesArray = new String[templateLanguagesAttributes.length];
+			for(int i=0;i<templateLanguagesArray.length;i++) {
+				templateLanguagesArray[i] = new String(templateLanguagesAttributes[i].getValue());
+			}
+		}
+	Arrays.sort(templateLanguagesArray);
+	Set<String> templateLanguages = new HashSet<String>(Arrays.asList(templateLanguagesArray));
+	TemplateAttribute[] templateLanguageDefault = TemplateAttribute.getAttributeValue(context,(String)customerSurvey.getSurveyTemplateInstanceID(),"Form Language Default");
+	
+	//Skip the displayLanguage rules if the user has chosen a different language in which to display the form 
+	//during this session.  Otherwise, route through the langauge template routing rules
+	if (sessionTemplateLanguage != null && !sessionTemplateLanguage.equals("")){
+		displayLanguage=sessionTemplateLanguage;
+		currentLang=sessionTemplateLanguage;
+	} else {
+	
+	
+		//Verify that the template default language is a supported language for the template.  If so, set the default langauge
+		//equal to the template language default. If not, do nothing -- leave the default language as the catalog default language.
+		//The catalog default language and the form default language are usually the same value, but they don't have to be.
+		//Use case example:  Form is used in Europe, but not North America.  Catalog default language is English.
+		//English is not a supported language for the form.  Set the default language to a supported value, such as French.
+		if (templateLanguageDefault.length>0 && templateLanguages.contains(templateLanguageDefault[0].getValue())){
+			//if (templateLanguageDefault[0].getValue().equals("en") || templateLanguageDefault[0].getValue().equals("es_ES") || templateLanguageDefault[0].getValue().equals("es") || templateLanguageDefault[0].getValue().equals("fr") || templateLanguageDefault[0].getValue().equals("de") || templateLanguageDefault[0].getValue().equals("it") || templateLanguageDefault[0].getValue().equals("pt_PT") || templateLanguageDefault[0].getValue().equals("pt_BR") || templateLanguageDefault[0].getValue().equals("ja") || templateLanguageDefault[0].getValue().equals("zh") || templateLanguageDefault[0].getValue().equals("cs")){
+				defaultLanguage=templateLanguageDefault[0].getValue();
+			//}
+		}
+
+		//Determine if the users current language setting is one of the languages supported by the form.  
+		//If so, use that language.  If not, use the form's default language.  If no template languages were defined set
+		//the display language value equal to the catalog default language
+		if (!currentLang.equals("") && templateLanguages.contains(currentLang)) {
+			displayLanguage=currentLang;
+		} else if (!currentLang.equals("") && templateLanguages.contains(currentLang.substring(0,2))) {
+			currentLang=currentLang.substring(0,2);
+			displayLanguage=currentLang;
+		} else {
+			displayLanguage=defaultLanguage;
+		}
+		
+		
+		// if (templateLanguages.length>0) {
+			// String matchingLanguage=null;
+			// String[] templateLanguageArray2=templateLanguages[0].getValue().split(",");
+			// for(int i=0;i<templateLanguageArray2.length;i++) {
+				// if (currentLang.equals(templateLanguageArray2[i])){
+					// matchingLanguage=currentLang;
+				// }
+			// }
+			// if (matchingLanguage==null){
+				// displayLanguage=defaultLanguage;
+			// } else {
+				// displayLanguage=matchingLanguage;
+			// }
+		// } else {
+			// displayLanguage=defaultLanguage;
+		// }
+
+		
+
+		//If no session attribute exists, set a session Attribute to store what language this form will be displayed in.  
+		//Used for multi-page forms to ensure subsequent pages display in the same selected langauge if the user didn't also
+		//change their preferred language.
+		//This session attribute is changed by a javascript function that makes an AJAX call when the user changes the language on the form.
+		if (sessionTemplateLanguage == null || sessionTemplateLanguage.equals("")){
+			session.setAttribute(customerSurvey.getSurveyTemplateInstanceID()+"-DisplayLanguage",displayLanguage);
+		}
+	
+	
+	}
+	
+	
+	
+	
+	
+	//TODO: This belongs elsewhere, not in the language setting values.  Perhaps in a 'preferences helper'?
+	//      And is only applicable at the catalog level.  Unless code is written to evaluate the favorites variable and
+	//      Display something (i.e., a "star" next to a favorite forms.
+    HashSet <String> favoriteForms = new HashSet <String>();    
+    if (preferences.containsKey("Favorite")){
+        for (Preference pref : preferences.get("Favorite")) {
+            favoriteForms.add(pref.getValue());
+            String favorite = pref.getValue();
+            //System.out.println("FAV : "+favorite);
+        }
+	}
+
+	//determine if current form is a favorite store in isFavorite variable
+	boolean isFavorite = false;
+	if (favoriteForms.contains(customerSurvey.getSurveyTemplateInstanceID())) {
+		isFavorite = true;
+	}
+	
+	
+	//Initiate language variables.
+	//i18nValues holds the translations that will be used by javascript code.  After it is populated with all the value
+	//from all the resourceBundles, it is used to populate the Localize javascript variable later on in the load process.
+	String i18nValues = "";
+
+	//Set all the resourceBundle variables to null. Each packageInitialization file is responsible for populating these
+	//for use as necessary.  ServiceItems and Standards are always loaded as they are stored in the commons directory.
+	java.util.ResourceBundle catalogResourceBundle=null;
+	java.util.ResourceBundle categoryResourceBundle=null;
+    java.util.ResourceBundle templateResourceBundle=null;
+	java.util.ResourceBundle serviceItemsResourceBundle=ThemeLocalizer.getResourceBundle("ServiceItems", displayLanguage, bundle.getProperty("languageTranslationBase"), bundle.bundlePath+"common/");
+	java.util.ResourceBundle standardsResourceBundle=ThemeLocalizer.getResourceBundle("Standards", displayLanguage, bundle.getProperty("languageTranslationBase"), bundle.bundlePath+"common/");
+
+	
+	for( java.util.Enumeration en = standardsResourceBundle.getKeys(); en.hasMoreElements(); ){
+		String key = (String)en.nextElement();
+		if (key.indexOf("javascript.")>=0){
+			String keyVal=key.replaceAll("javascript.", "");
+			if (i18nValues!=""){
+				i18nValues+=",";
+			}
+			i18nValues += "\""+keyVal+"\" : \""+standardsResourceBundle.getString(key)+"\"";
+		}
+	}
+	
+%>
+<%--
+	//TODO:  Need to extract this data from the templateAttributes of the service item, so it is more dynamic.
+	//       We don't want to ever hard code the supported categories in the code.
+	//       I think we can remove this, and loop through the values elsewhere (in the header, where we put the language
+	//       drop down list.
+	 
+	Locale itssUSLocale = Locale.ENGLISH;
+	Locale itssChineseLocale = Locale.SIMPLIFIED_CHINESE;
+	Locale itssFrenchLocale = Locale.FRENCH;
+	Locale itssGermanLocale = Locale.GERMAN;
+	Locale itssItalianLocale = Locale.ITALIAN;
+	Locale itssJapaneseLocale = Locale.JAPANESE;
+	Locale itssPortugueseLocale = new Locale("pt");
+	Locale itssSpanishLocale = new Locale("es");
+	Locale itssCzechLocale = new Locale("cs");
+--%>

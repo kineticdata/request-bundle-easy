@@ -1,0 +1,192 @@
+/*
+ * This stylesheet contains style properties that apply to the table and the
+ * controls for the table.
+ *
+ * These style properties are applied to the table controls displayed on the
+ * page.
+ */
+ 
+ /* used in place of hidden, which the bootstrap also uses....*/
+.abc{
+	display:none;
+	visibility: inherit;
+}
+
+input[type="text"], select{
+	width:auto;
+	margin-bottom: 0px;
+	height:26px;
+}
+
+input[type="button"]{
+	border-radius: 6px;
+    -webkit-border-radius: 6px;
+   	-moz-border-radius: 6px;
+    /*background-color:#003399;*/
+	background-color:#1F497D;
+	color: #FFFFFF;
+	border: 0;
+	cursor: pointer;
+    font-weight: bold;
+}
+
+label {
+	display: inline-block;
+	margin-bottom: 0px;
+}
+
+table#status{
+	width: 960px;
+}
+
+table .childTable{
+	width: 960px;
+}
+
+#contentBody{
+	width: 960px;
+	margin: 0px auto;
+}
+ 
+.tableContainer {
+	/*font-size: .9em;*/
+	font-size: 1.0em;
+}
+
+.tableControls {
+	margin-bottom: 10px;
+	height: 34px; 
+}
+ 
+ .tableControls .tableControl {
+    background-color: #A1A1A1;
+    color: #FFFFFF;
+    cursor: pointer;
+    float: left;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 24px; /* This is equal to the height of the button element in the sources control */
+    margin-right: 5px;
+    padding: 2px 5px;
+    vertical-align: top;
+	border-radius: 6px;
+	-moz-border-radius:6px;
+  	-webkit-border-radius:6px;
+	height:30px;
+}
+.tableControls .tableControl.pageSize, .tableControls .tableControl.sortOrder {
+    float: right;
+}
+.tableControls .tableControl.sources {
+    position: relative;
+}
+.tableControls .tableControl.sources .sourcesSelector {
+    background-color: #A1A1A1;
+    left: 0;
+    position: absolute;
+    top: 28px; /* This is equal to the rendered height of the sources control */
+    width: 100%;
+    z-index: 1;
+}
+.tableControls .tableControl.sources .sourcesSelector .sourcesCheckboxes div {
+    padding: 2px;
+    white-space: nowrap;
+}
+.tableControls .tableControl.sources .sourcesSelector .sourcesCheckboxes div input {
+    margin: 3px;
+}
+
+/*
+ * The style properties below apply to the activity table.  Note that if the
+ * implementation contains child tables they will also be affected most of the
+ * properties below (unless otherwise noted).
+ */
+.tableContainer table tr {
+    height: 30px;
+}
+
+.tableContainer thead {
+	background-color: #4F81BD;
+	color: #FFFFFF;
+}
+
+/*
+ * These properties that apply the zebra striping only apply to the main table.
+ * If you wish to modify it to apply to any tables within simply remove the
+ * greater-than characters from the selector.
+ */
+.tableContainer table > tbody > tr.even { background: #DCE6F2; }
+.tableContainer table > tbody > tr.odd  { background: #B9CDE5; }
+.tableContainer table td {
+    padding: 0;
+}
+.tableContainer table td.links {
+    text-align: center;
+}
+.tableContainer table td.links a.minimize,
+.tableContainer table td.links a.maximize {
+    font-size: 14px;
+    font-family: monospace;
+    font-weight: bold;
+	text-decoration:none;
+}
+.tableContainer table td.source {
+    color: #777777;
+    font-weight: bold;
+}
+/*
+ * This set of properties is applied to prevent the table cell elements from
+ * expanding which makes it easier to style the table consistently.  When the
+ * content would normally expand the width of the cell (because there is no
+ * white-space for a line break) a hard break is made where necessary.  Note
+ * that it will still break on white-space if available.  Also this desgin
+ * requires the element to have an explicit width, which we default here to 150
+ * pixels.  To override this width add another style class to the element and
+ * define a width for that class (see below for examples of this).
+ */
+.tableContainer table td .wrapper {
+    overflow: hidden;
+    width: 150px;
+    white-space: pre-wrap; /* css-3 */
+    white-space: -moz-pre-wrap !important; /* Mozilla, since 1999 */
+    white-space: -pre-wrap; /* Opera 4-6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+    word-wrap: break-word; /* Internet Explorer 5.5+ */
+    white-space: pre;
+    white-space: -hp-pre-wrap; /* HP Printers */
+    white-space: pre-line;
+}
+.tableContainer table td .wrapper.links        { width: 25px; }
+.tableContainer table td .wrapper.id           { width: 125px; }
+.tableContainer table td .wrapper.status       { width: 200px; }
+/*.tableContainer table td .wrapper.statusReason       { width: 100px; }*/
+.tableContainer table td .wrapper.createdAt    { width: 127px; }
+/*.tableContainer table td .wrapper.expectedResolution    { width: 118px; }*/
+.tableContainer table td .wrapper.description  { width: 254px; }
+.tableContainer table td .wrapper.source       { width: 95px;}
+
+.tableContainer table th .wrapper.links        { width: 25px; }
+.tableContainer table th .wrapper.id           { width: 125px; }
+.tableContainer table th .wrapper.status       { width: 200px; }
+/*.tableContainer table th .wrapper.statusReason       { width: 100px; }*/
+.tableContainer table th .wrapper.createdAt    { width: 127px; }
+/*.tableContainer table th .wrapper.expectedResolution    { width: 118px; }*/
+.tableContainer table th .wrapper.description  { width: 254px; }
+.tableContainer table th .wrapper.source       { width: 95px;}
+
+/*
+ * These styles are applied to the child table that is added by adding a row
+ * to the main table.  The child row is given a height of 0 and the container
+ * of the child table is hidden so that we can use a slide down effect to
+ * present the data.
+ */
+.tableContainer table tr.childRow {
+    height: 0;
+}
+.tableContainer table tr.childRow .childContainer {
+    display: none;
+}
+.tableContainer table tr.childRow .childContainer table.childTable thead {
+    display: none;
+}

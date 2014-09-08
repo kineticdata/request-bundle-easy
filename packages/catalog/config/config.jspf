@@ -1,0 +1,21 @@
+<%--
+    Catalog config
+    NOTE: This file is required.
+--%>
+<%
+    // Configuration of available description attributes for search and catgory display pages.
+    ArrayList<String> attributeDescriptionNames = new ArrayList();
+    attributeDescriptionNames.add("Who Can Request");  
+    attributeDescriptionNames.add("Charge");
+	attributeDescriptionNames.add("Median Hours to Fulfill");
+    attributeDescriptionNames.add("Approvals");
+
+    // Used in catalog.jsp for top Requests. This is used to filter top Requests by their template type
+    String[] templateTypeFilterTopSubmissions = new String[] {"Approval", "Utility", "Request Description", "Resolution Inquiry", "Portal"}; 
+    /* These qualfications are designed for custiomer survey, not customer survey base! */
+    java.util.Map<String,String> displayGroups = new java.util.LinkedHashMap();
+    if (context != null) {
+        displayGroups.put("Open Request", "'ApplicationName'=\"Kinetic Request\" AND 'Category'=\""+bundle.getProperty("catalogName")+"\" AND 'CustomerSurveyStatus'=\"Completed\" AND 'Request_Status'=\"Open\" AND 'Submitter'=\""+context.getUserName()+"\" AND 'Submit Type'=$NULL$ AND ('Type' != \"Utility\" OR 'Type' = $NULL$)");
+        displayGroups.put("Pending Approval",   "'ApplicationName'=\"Kinetic Request\" AND 'Category'=\""+bundle.getProperty("catalogName")+"\" AND 'CustomerSurveyStatus'=\"Sent\" AND 'Request_Status'=\"Open\" AND 'Submit Type'=\"Approval\" AND 'Submitter'=\""+context.getUserName()+"\"");
+    }
+%>

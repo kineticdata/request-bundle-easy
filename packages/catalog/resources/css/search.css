@@ -1,0 +1,7 @@
+@charset "utf-8";
+ul.keywords { margin: 0; padding: 0; }
+ul.keywords li.keyword ul.keyword-values { margin: 0; padding: 0; }
+ul.keywords li.keyword ul.keyword-values li.keyword-value { margin: 0; padding: 0 5px 0 0; float: left; }
+ul.keywords li.keyword ul.keyword-values li:after { content: ", "; }
+ul.keywords li.keyword ul.keyword-values li:last-child:after { content: ""; }
+ul.keywords li.keyword ul.keyword-values li.keyword-value:first-child { padding: 0 5px 0 0; border-left: none; }

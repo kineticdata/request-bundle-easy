@@ -1,0 +1,53 @@
+<%!
+    public static class CatalogAttribute {
+        public static final String FORM_NAME = "KS_ATT_AttributeTypeInstanceJoin";
+
+        public static final String FIELD_ATTRIBUTE_NAME = "710000074";
+        public static final String FIELD_ATTRIBUTE_VALUE = "710000040";
+        public static final String FIELD_CATEGORY_INSTANCE_ID = "710000078";
+        public static final String[] FIELD_IDS = new String[]{
+            FIELD_ATTRIBUTE_NAME, FIELD_ATTRIBUTE_VALUE, FIELD_CATEGORY_INSTANCE_ID};
+
+        private SimpleEntry entry = null;
+
+        public CatalogAttribute(SimpleEntry entry) {
+            this.entry = entry;
+        }
+
+        public static CatalogAttribute[] findByCategoryInstanceId(HelperContext context, String categoryId) {
+            CatalogAttribute[] results = new CatalogAttribute[0];
+
+            String qualification = "'" + FIELD_CATEGORY_INSTANCE_ID + "' = \"" + categoryId + "\"";
+
+            SimpleEntry[] entries = ArsBase.find(context, FORM_NAME, qualification, FIELD_IDS);
+            if (entries != null && entries.length > 0) {
+                results = new CatalogAttribute[entries.length];
+                for(int i=0;i<results.length;i++) {
+                    results[i] = new CatalogAttribute(entries[i]);
+                }
+            }
+
+            return results;
+        }
+
+		public static CatalogAttribute[] getAttributeValue(HelperContext context, String categoryId, String attrName) {
+			CatalogAttribute[] results = new CatalogAttribute[0];
+
+			String qualification = "'" + FIELD_CATEGORY_INSTANCE_ID + "' = \"" + categoryId + "\" AND '" + FIELD_ATTRIBUTE_NAME + "' = \"" + attrName + "\"";
+
+			SimpleEntry[] entries = ArsBase.find(context, FORM_NAME, qualification, FIELD_IDS);
+			if (entries != null && entries.length > 0) {
+				results = new CatalogAttribute[entries.length];
+				for(int i=0;i<results.length;i++) {
+					results[i] = new CatalogAttribute(entries[i]);
+				}
+			}
+			
+			return results;
+		}
+
+        public String getName() {return entry.getEntryFieldValue(FIELD_ATTRIBUTE_NAME);}
+        public String getValue() {return entry.getEntryFieldValue(FIELD_ATTRIBUTE_VALUE);}
+
+    }
+%>

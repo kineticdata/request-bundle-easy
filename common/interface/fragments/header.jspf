@@ -1,0 +1,98 @@
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="<%= bundle.getProperty("homeUrl")%>"><%= bundle.getProperty("catalogName")%></a>
+                <ul class="nav navbar-top-links navbar-right">
+                        <!-- /.dropdown -->
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-tasks fa-fw"></i>  <i class="fa fa-caret-down"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-tasks">
+                            <% for (Category category : catalog.getRootCategories(context)) { %>
+                                <% if(category.getName().equals("Portals")) { %>
+                                    <% if(!categoryFilterHashSet.contains(category.getName())) {%>
+                                        <% if (category.hasTemplates() || category.hasNonEmptySubcategories()) { %>
+                                            <% for (Template tmpl : category.getTemplates()) { %>
+                                                <li data-id="<%= category.getId()%>" data-name="<%= category.getName()%>">
+                                                    <a href="<%= tmpl.getAnonymousUrl()%>" class="name">
+                                                        <div>
+                                                        <%=ThemeLocalizer.getString(serviceItemsResourceBundle,tmpl.getName())%>
+                                                        </div>
+                                                    </a>
+                                                </li>
+                                                <li class="divider"></li>
+                                            <% } %>
+                                        <% } %>
+                                    <% } %>
+                                <% } %>
+                            <% }%>
+                            </ul>
+                            <!-- /.dropdown-tasks -->
+                        </li>
+                        <!-- /.dropdown -->
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-bell fa-fw"></i>  <i class="fa fa-caret-down"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-alerts">
+                                <li>
+                                    <a href="#">
+                                        <div>
+                                            <i class="fa fa-exclamation-triangle fa-fw"></i> Email Shutdown
+                                            <span class="pull-right text-muted small">4 minutes ago</span>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <a href="#">
+                                        <div>
+                                            <i class="fa fa-info-circle fa-fw"></i> Oracle Upgrade
+                                            <span class="pull-right text-muted small">12 minutes ago</span>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <a href="#">
+                                        <div>
+                                            <i class="fa fa-check-square fa-fw"></i> Server Rebooted
+                                            <span class="pull-right text-muted small">34 minutes ago</span>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <a class="text-center" href="#">
+                                        <strong>See All Alerts</strong>
+                                        <i class="fa fa-angle-right"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                            <!-- /.dropdown-alerts -->
+                        </li>
+                        <!-- /.dropdown -->
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><strong><%= context.getUserName() %></strong>
+                                </li>
+                                <li><a href="<%= bundle.getProperty("profileUrl")%>"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                                </li>
+                                <!--li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                                </li-->
+                                <li class="divider"></li>
+                                <li><a href="<%= bundle.getProperty("logoutUrl")%>"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                                </li>
+                            </ul>
+                            <!-- /.dropdown-user -->
+                        </li>
+                        <!-- /.dropdown -->
+                    </ul>
+                    <!-- /.navbar-top-links -->
+                </div>
+                <!-- /.navbar-header -->
+        </nav>

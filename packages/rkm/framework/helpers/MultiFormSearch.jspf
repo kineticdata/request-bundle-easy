@@ -1,0 +1,161 @@
+<%!
+    public static class MultiFormSearch {
+
+        private static final String TARGETFORM = "AR System Multi-Form Search";
+        private String mustHave = null;
+        private String mayHave = null;
+        private String mustNotHave = null;
+        private com.bmc.arsys.api.ARServerUser systemUser = null;
+        private String query = null;
+
+        public MultiFormSearch(String mustHave, String mayHave, String mustNotHave, com.bmc.arsys.api.ARServerUser systemUser) throws Exception {
+            this.mustHave = mustHave;
+            this.mayHave = mayHave;
+            this.mustNotHave = mustNotHave;
+            this.systemUser = systemUser;
+            this.query = buildQuery();
+        }
+        
+        /**
+         * @return 
+         * @throws com.bmc.arsys.api.ARException
+         */
+        public String search(com.bmc.arsys.api.ARServerUser serverUser) throws com.bmc.arsys.api.ARException, Exception {
+            // Convert the query to a qual
+            com.bmc.arsys.api.QualifierInfo qual = serverUser.parseQualification(TARGETFORM, query);
+
+            int[] fieldIds = {3010, 3011, 3012, 3013, 3014, 3015, 3016};
+
+            // Run the query and get back EntryInfo data
+            java.util.List<com.bmc.arsys.api.Entry> entryList = serverUser.getListEntryObjects(
+                    TARGETFORM, qual,
+                    com.bmc.arsys.api.Constants.AR_START_WITH_FIRST_ENTRY,
+                    com.bmc.arsys.api.Constants.AR_NO_MAX_LIST_RETRIEVE,
+                    null, fieldIds, false, null);
+
+            // Instantiate the output object
+            java.util.ArrayList<java.util.LinkedHashMap> outputCollection = new java.util.ArrayList();
+            
+            // Iterate over the List of Entry objects.
+            for (com.bmc.arsys.api.Entry entry : entryList) {
+                String deepTargetForm = entry.get(3010).getValue().toString();
+                String deepTargetEntryId = entry.get(3011).getValue().toString();
+
+                java.util.ArrayList<String> entryIdList = new java.util.ArrayList();
+                entryIdList.add(deepTargetEntryId);
+
+                java.util.LinkedHashMap<String, String> myHashMap = new java.util.LinkedHashMap();
+
+                // 302300502 = Article Title
+                // 302300507 = DocID
+                // 3 = Created Date
+                // 6 = Modified Date
+                // 302311201 = How-To answer field (unlimited)
+                // 302301007 = KnowledgeSourceName
+                // 302311206 = Problem solution field (unlimited)
+                // 302311207 = Known Error "Error" field
+                // 302311210 = RKM Reference "Reference" field
+                int[] deepFieldIds = new int[6];
+                deepFieldIds[0] = 302300502;
+                deepFieldIds[1] = 302300507;
+                deepFieldIds[2] = 6;
+                deepFieldIds[5] = 3;
+                deepFieldIds[3] = 302301007;
+
+                // Query for the data in the ultimate target form.
+                if (deepTargetForm.startsWith("RKM:HowToTemplate")) {
+                    deepFieldIds[4] = 302311201;
+                } else if (deepTargetForm.startsWith("RKM:ProblemSolution")) {
+                    deepFieldIds[4] = 302311206;
+                } else if (deepTargetForm.startsWith("RKM:KnownError")) {
+                    deepFieldIds[4] = 302311207;
+                } else if (deepTargetForm.startsWith("RKM:Reference")) {
+                    deepFieldIds[4] = 302311210;
+                } else if (deepTargetForm.startsWith("RKM:DecisionTree")) {
+                    deepFieldIds[4] = 302311212;
+                }
+
+                java.util.List<com.bmc.arsys.api.Entry> deepEntryList = serverUser.getListEntryObjects(
+                        deepTargetForm, entryIdList, deepFieldIds);
+
+                if (deepEntryList.size() > 0) {
+                    // Retrieve the article title, id, source, and summary
+                    // values from the entries.  These are retrieved in such a
+                    // way that guards against null pointers because they may
+                    // contain null values.
+                    Object articleTitleValue = deepEntryList.get(0).get(302300502).getValue();
+                    String articleTitle = (articleTitleValue == null) ? null : articleTitleValue.toString();
+                    Object articleIdValue = deepEntryList.get(0).get(302300507).getValue();
+                    String articleId = (articleIdValue == null) ? null : articleIdValue.toString();
+                    Object sourceValue = deepEntryList.get(0).get(302301007).getValue();
+                    String source = (sourceValue == null) ? null : sourceValue.toString();
+                    Object summaryValue = deepEntryList.get(0).get(deepFieldIds[4]).getValue();
+                    String summary = (summaryValue == null) ? null : summaryValue.toString().replaceAll("\\<[^>]*>", "");
+
+                    // Retrieve the article modified and created date values
+                    // from the entry.  These are not guarded against null
+                    // pointers because they are assumed to always have a value.
+                    java.util.Date modifiedDate = ((com.bmc.arsys.api.Timestamp) deepEntryList.get(0).get(6).getValue()).toDate();
+                    java.util.Date createdDate = ((com.bmc.arsys.api.Timestamp) deepEntryList.get(0).get(3).getValue()).toDate();
+
+                    myHashMap.put("Article Title", articleTitle);
+                    myHashMap.put("Article ID", articleId);
+                    myHashMap.put("Source", source);
+                    myHashMap.put("Created Date", createdDate.toString());
+                    myHashMap.put("Created Ago", PackageHelper.timeAgo(createdDate));
+
+                    if (summary != null && summary.length() > 128) {
+                        myHashMap.put("Summary", summary.substring(0, 128));
+                    } else {
+                        myHashMap.put("Summary", summary);
+                    }
+                    outputCollection.add(myHashMap);
+                }
+            }
+            return org.json.simple.JSONValue.toJSONString(outputCollection);
+        }
+
+        private String buildQuery() throws Exception {
+            if ((mayHave == null) && (mustHave == null) && (mustNotHave == null))
+                throw new Exception("No search terms were given");
+
+            StringBuilder sb = new StringBuilder();
+
+            if (mustHave != null)
+                sb.append("('3001' = \"" + mustHave + "\")");
+
+            if (mayHave != null) {
+                if (!"".equals(sb.toString()))
+                    sb.append(" AND ");
+                sb.append("('3002' = \"" + mayHave + "\")");
+            }
+
+            if (mustNotHave != null) {
+                if (!"".equals(sb.toString()))
+                    sb.append(" AND ");
+                sb.append("('3003' = \"" + mustNotHave + "\")");
+            }
+
+            sb.append(" AND ");
+            sb.append("'3000' = \"" + buildSchemaIds() + "\"");
+            return sb.toString();
+        }
+
+        private String buildSchemaIds() throws Exception {
+            String schemaNames = "'RKM:DecisionTreeTemplate_Manageable_Join'," +
+                "'RKM:KnownErrorTemplate_Manageable_Join'," +
+                "'RKM:HowToTemplate_Manageable_Join'," +
+                "'RKM:ProblemSolutionTemplate_Manageable_Join'," +
+                "'RKM:ReferenceTemplate_Manageable_Join'";
+            com.bmc.arsys.api.SQLResult sqlResult = systemUser.getListSQL(
+                    "SELECT name, schemaID FROM arschema WHERE name IN (" + schemaNames + ")",
+                    5, false);
+            String result = "";
+            for (java.util.List<com.bmc.arsys.api.Value> row : sqlResult.getContents()) {
+                result += row.get(1);
+                result += ";";
+            }
+            return result;
+        }
+    }
+%>
