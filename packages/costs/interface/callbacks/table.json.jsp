@@ -95,11 +95,10 @@
 
 
                     logger.debug("TABLEJSON: " + submissionData);
-        results.put("data", tableData);
+        results.put("data", submissionData);
                             logger.debug("RESULTS: " + results);
         // Output json string
         out.print(JSONValue.toJSONString(results));
-                                    logger.debug("JSON: " + JSONValue.toJSONString(results));
 
     }
 %>
