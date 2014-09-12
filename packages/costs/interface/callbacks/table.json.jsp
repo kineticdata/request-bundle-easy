@@ -90,11 +90,14 @@
             submissionData.add(tableData[i]);
         }*/
         // Add submission array to data
-        
+
                     //Logger logger = LogHelper.getLogger();
                     logger.debug("TABLEJSON: " + tableData);
         results.put("data", tableData);
+                            logger.debug("RESULTS: " + results);
         // Output json string
         out.print(JSONValue.toJSONString(results));
+                                    logger.debug("JSON: " + JSONValue.toJSONString(results));
+
     }
 %>
