@@ -71,7 +71,6 @@
         SimpleEntry entry = entries[i];
         for (int j = 0; j < fieldIds.length; j++) {
             tableData[i][j] = entry.getEntryFieldValue(fieldIds[j]);
-            logger.debug("this: " + tableData[i][j]);
         }
     }
 
@@ -86,17 +85,13 @@
         results.put("limit", pageSize);
         results.put("offset", pageOffset);
         // Build submission array
-        List<List> submissionData = new LinkedList<List>();
+        List<List> jsonData = new LinkedList<List>();
         for (int i = 0; i < tableData.length; i++) {
-            List list1 = Arrays.asList(tableData[i]);
-            submissionData.add(list1);
+            List list = Arrays.asList(tableData[i]);
+            jsonData.add(list);
         }
         // Add submission array to data
-
-
-                    logger.debug("TABLEJSON: " + submissionData);
-        results.put("data", submissionData);
-                            logger.debug("RESULTS: " + results);
+        results.put("data", jsonData);
         // Output json string
         out.print(JSONValue.toJSONString(results));
 
