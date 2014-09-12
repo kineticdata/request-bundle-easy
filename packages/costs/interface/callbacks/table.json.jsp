@@ -85,12 +85,12 @@
         results.put("limit", pageSize);
         results.put("offset", pageOffset);
         // Build submission array
-        List<String[]> submissionData = new LinkedList<String[]>();
+        /*List<String[]> submissionData = new LinkedList<String[]>();
         for (int i = 0; i < tableData.length; i++) {
             submissionData.add(tableData[i]);
-        }
+        }*/
         // Add submission array to data
-        results.put("data", submissionData);
+        results.put("data", tableData);
         // Output json string
         out.print(JSONValue.toJSONString(results));
     }
