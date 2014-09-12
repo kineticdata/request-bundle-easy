@@ -92,7 +92,8 @@
         // Add submission array to data
 
                     //Logger logger = LogHelper.getLogger();
-                    logger.debug("TABLEJSON: " + tableData);
+                    List list1 = Arrays.asList(tableData);
+                    logger.debug("TABLEJSON: " + list1);
         results.put("data", tableData);
                             logger.debug("RESULTS: " + results);
         // Output json string
