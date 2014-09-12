@@ -79,27 +79,19 @@
      * that we escape any new-line characters in the data.  We also escape the
      * double-quote chracter in the as well because they are our delimiter.
      */
-    out.println("{");
-    out.println("\"count\" : " + count + ",");
-    out.println("\"records\" : [");
-    for (int i = 0; i < tableData.length; i++) {
-        if (i != 0) {
-            out.println(",");
+        // Build result map
+        Map<String,Object> results = new LinkedHashMap<String,Object>();
+        results.put("count", count);
+        results.put("limit", pageSize);
+        results.put("offset", pageOffset);
+        // Build submission array
+        List<String[]> submissionData = new LinkedList<String[]>();
+        for (int i = 0; i < tableData.length; i++) {
+            submissionData.add(tableData[i]);
         }
-        out.print("[");
-        for (int j = 0; j < tableData[i].length; j++) {
-            if (j != 0) {
-                out.print(",");
-            }
-            if (tableData[i][j] == null) {
-                out.print("\"\"");
-            } else {
-                out.print("\"" + tableData[i][j].replaceAll("\"","\\\\\"").replaceAll("\n", "\\\\n").replaceAll("\r", "\\\\r") + "\"");
-            }
-        }
-        out.print("]");
-    }
-    out.println("]");
-    out.println("}");
+        // Add submission array to data
+        results.put("data", submissionData);
+        // Output json string
+        out.print(JSONValue.toJSONString(results));
     }
 %>
