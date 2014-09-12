@@ -86,7 +86,7 @@
         results.put("limit", pageSize);
         results.put("offset", pageOffset);
         // Build submission array
-        List<String[]> submissionData = new LinkedList<String[]>();
+        List<List> submissionData = new LinkedList<List>();
         for (int i = 0; i < tableData.length; i++) {
             List list1 = Arrays.asList(tableData[i]);
             submissionData.add(list1);
