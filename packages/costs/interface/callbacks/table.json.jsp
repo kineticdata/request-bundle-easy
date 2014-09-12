@@ -90,6 +90,7 @@
             submissionData.add(tableData[i]);
         }*/
         // Add submission array to data
+        
                     //Logger logger = LogHelper.getLogger();
                     logger.debug("TABLEJSON: " + tableData);
         results.put("data", tableData);
