@@ -71,6 +71,7 @@
         SimpleEntry entry = entries[i];
         for (int j = 0; j < fieldIds.length; j++) {
             tableData[i][j] = entry.getEntryFieldValue(fieldIds[j]);
+            logger.debug("this: " + tableData[i][j]);
         }
     }
 
@@ -90,8 +91,6 @@
             submissionData.add(tableData[i]);
         }*/
         // Add submission array to data
-
-                    //Logger logger = LogHelper.getLogger();
                     List list1 = Arrays.asList(tableData);
                     logger.debug("TABLEJSON: " + list1);
         results.put("data", tableData);
