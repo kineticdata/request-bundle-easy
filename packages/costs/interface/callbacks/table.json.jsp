@@ -6,7 +6,9 @@
 <%@page import="org.json.simple.JSONArray"%>
 <%@page import="org.json.simple.JSONObject"%>
 <%@page import="org.json.simple.parser.JSONParser"%>
-<%@page import="org.json.simple.parser.ParseException"%><%@include file="../../../core/framework/includes/bundleInitialization.jspf"%>
+<%@page import="org.json.simple.parser.ParseException"%>
+<!-- %@include file="../../../core/framework/includes/bundleInitialization.jspf"% -->
+<%@include file="../../../../core/framework/includes/bundleInitialization.jspf"%>
 <%
     if (context == null) {
         ResponseHelper.sendUnauthorizedResponse(response);
